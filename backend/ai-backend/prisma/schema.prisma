@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  workspaces WorkspaceUser[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  users       WorkspaceUser[]
+  collections Collection[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceUser {
+  id          String   @id @default(uuid())
+  role        Role     @default(MEMBER)
+  userId      String
+  workspaceId String
+
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  createdAt   DateTime  @default(now()) // Added for tracking
+  updatedAt   DateTime  @updatedAt      // Added for tracking
+
+  @@unique([userId, workspaceId])
+  @@map("workspace_users")
+}
+
+model Collection {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  // Optional field you might add later
+  createdAt   DateTime @default(now())
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  assets Asset[]
+
+  @@map("collections")
+}
+
+model Asset {
+  id           String   @id @default(uuid())
+  title        String
+  type         String
+  content      String?  // Optional field for text content
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt // Added for tracking
+
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id])
+
+  @@map("assets")
+}
