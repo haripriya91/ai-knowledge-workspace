@@ -137,3 +137,11 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+pgdata/
+mongo_data/
+# Ignore migration lock
+**/migration_lock.toml
+
+# Ignore SQL migration files (optional)
+**/*.sql
