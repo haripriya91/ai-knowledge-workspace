@@ -1,0 +1,24 @@
+<div class="flex justify-between items-center mb-4">
+    <app-view-toggle
+      [view]="view"
+      (viewChange)="onViewChange($event)">
+    </app-view-toggle>
+  
+    <button class="btn-outline">
+      Create Workspace
+    </button>
+  </div>
+  <div
+  [class]="
+    view === 'grid'
+      ? 'grid grid-cols-3 gap-6'
+      : 'space-y-4'
+  "
+>
+  @for (ws of workspaces; track ws.id) {
+    <div class="workspace-card">
+      <img [src]="ws.coverImage" />
+      <div class="title">{{ ws.title }}</div>
+    </div>
+  }
+</div>
