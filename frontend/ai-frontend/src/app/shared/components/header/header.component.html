@@ -1,8 +1,22 @@
 <header class="flex items-center justify-between px-6 py-3 border-b bg-white">
-    <h1 class="text-xl font-semibold">AI Knowledge Workspace</h1>
-  
-    <nav class="flex gap-4">
+  <div class="font-bold text-xl">YourLogo     <h1 class="text-xl font-semibold">AI Knowledge Workspace</h1>
+  </div>  
+
+    @if (!isLoggedIn) { 
+      <nav class="flex gap-6">
+      <a>Overview</a>
+      <a>How it works</a>
+      <a>Public Workspaces</a>
       <a routerLink="/login" class="text-sm">Login</a>
       <a routerLink="/signup" class="text-sm font-medium">Sign Up</a>
     </nav>
-  </header>
+   } 
+   @if (isLoggedIn) {
+    <nav  class="flex gap-2">
+      <a routerLink="/dashboard">Dashboard</a>
+      <a routerLink="/workspaces">Workspaces</a>
+    </nav>
+   }
+    
+</header>
+  
