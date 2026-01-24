@@ -1,1 +1,22 @@
-<p>workspace-card works!</p>
+<div
+  class="rounded-lg overflow-hidden shadow-lg border bg-white hover:shadow-lg w-full">
+  <img
+    [src]="workspace.thumbnail"
+    alt="{{ workspace.title }}"
+    class="h-60 object-cover w-full" />
+
+  <div class="p-6 space-y-2">
+    <h3 class="font-semibold text-lg">{{ workspace.title }}</h3>
+
+    <p class="text-sm text-gray-600 line-clamp-2">
+      {{ workspace.description }}
+    </p>
+
+    <div class="flex justify-between text-xs text-gray-500">
+      <span>{{ workspace.category }}</span>
+      @if (workspace.visibility === 'public') {
+        <span>🌍 Public</span>
+      }
+    </div>
+  </div>
+</div>
