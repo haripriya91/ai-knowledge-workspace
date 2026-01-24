@@ -1,4 +1,23 @@
-<div class="flex gap-2">
-    <button (click)="setView('grid')">⬛⬛</button>
-    <button (click)="setView('list')">☰</button>
-  </div>
+<div class="inline-flex border rounded-lg overflow-hidden">
+  <!-- Grid -->
+  <button (click)="setView('grid')" class="px-3 py-1 flex items-center justify-center transition"
+    [class.bg-gray-200]="view === 'grid'" [class.text-gray-900]="view === 'grid'"
+    [class.text-gray-500]="view !== 'grid'">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+      class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M3.75 3.75h7.5v7.5h-7.5v-7.5zm0 9h7.5v7.5h-7.5v-7.5zm9-9h7.5v7.5h-7.5v-7.5zm0 9h7.5v7.5h-7.5v-7.5z" />
+    </svg>
+  </button>
+
+  <!-- List -->
+  <button (click)="setView('list')" class="px-3 py-1 flex items-center justify-center transition border-l"
+    [class.bg-gray-200]="view === 'list'" [class.text-gray-900]="view === 'list'"
+    [class.text-gray-500]="view !== 'list'">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+      class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007M3.75 12h.007M3.75 17.25h.007" />
+    </svg>
+  </button>
+</div>

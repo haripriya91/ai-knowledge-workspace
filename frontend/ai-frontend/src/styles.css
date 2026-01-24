@@ -1,2 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss';
+
+/* Tailwind way in class attributes, or you can put in CSS file */
+.tab-section {
+    scroll-margin-top: 4rem; /* same height as header, so anchor scroll stops below sticky header */
+    min-height: calc(100vh - 4rem); /* full viewport minus header */
+  }

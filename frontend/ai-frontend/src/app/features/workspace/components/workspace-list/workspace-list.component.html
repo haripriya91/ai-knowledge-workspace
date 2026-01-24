@@ -1,1 +1,19 @@
-<p>workspace-list works!</p>
+@if (workspaces.length === 0) {
+    <p class="text-gray-500 text-center">No workspaces available.</p>
+  } @else {
+    <div
+    class="mx-auto"
+    [class.grid]="view === 'grid'"
+    [class.grid-cols-3]="view === 'grid'"
+    [class.gap-6]="view === 'grid'"
+    [class.flex]="view === 'list'"
+    [class.flex-col]="view === 'list'"
+    [class.items-center]="view === 'list'"
+    [class.space-y-4]="view === 'list'"
+    >
+      @for (ws of workspaces; track ws.id) {
+        <app-workspace-card [workspace]="ws" [view]="view" />
+      }
+    </div>
+  }
+  

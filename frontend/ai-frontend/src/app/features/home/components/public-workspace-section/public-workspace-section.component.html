@@ -1,24 +1,26 @@
-<div class="flex justify-between items-center mb-4">
-    <app-view-toggle
-      [view]="view"
-      (viewChange)="onViewChange($event)">
-    </app-view-toggle>
-  
-    <button class="btn-outline">
-      Create Workspace
-    </button>
-  </div>
-  <div
-  [class]="
-    view === 'grid'
-      ? 'grid grid-cols-3 gap-6'
-      : 'space-y-4'
-  "
->
-  @for (ws of workspaces; track ws.id) {
-    <div class="workspace-card">
-      <img [src]="ws.coverImage" />
-      <div class="title">{{ ws.title }}</div>
+<section id="public-workspaces" class="space-y-4">
+  <!-- Category Filter -->
+  <div class="flex items-center justify-between">
+    <div class="flex gap-2">
+      @for (cat of categories; track cat) {
+        <button
+          class="px-4 py-1 rounded border"
+          [class.bg-blue-500]="selectedCategory === cat"
+          [class.text-white]="selectedCategory === cat"
+          (click)="onCategoryChange(cat)"
+        >
+          {{ cat }}
+        </button>
+      }
     </div>
-  }
-</div>
+
+    <!-- View Toggle -->
+    <app-view-toggle [view]="view" (viewChange)="onViewChange($event)"></app-view-toggle>
+  </div>
+
+  <!-- Workspace List -->
+  <app-workspace-list
+    [workspaces]="filteredWorkspaces"
+    [view]="view"
+  ></app-workspace-list>
+</section>
