@@ -18,6 +18,7 @@ interface Menu {
 export class HeaderComponent {
   isLoggedIn = false;
   menus: Menu[] = [];
+  isMobileMenuOpen = false;
 
   nonLoggedInMenus = [
     { label: 'Overview', sectionId: 'hero' },

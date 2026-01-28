@@ -1,19 +1,71 @@
-<header class="flex items-center justify-between px-6 py-3 border-b bg-white sticky top-0 z-50 shadow">
-  <div class=""><img src="assets/logo.svg" alt="AI Knowledge Workspace" class="h-8 w-auto"/>
-  </div>  
+<header class="sticky top-0 z-50 bg-white shadow px-4 md:px-6 py-3 flex items-center justify-between">
+  <!-- Logo -->
+  <div class="flex items-center gap-2">
+    <img src="assets/logo.svg" alt="AI Knowledge Workspace" class="h-7 md:h-8 w-auto" />
+  </div>
 
-     <!-- Menu items -->
-     @if (menus.length > 0) {
-      <nav class="flex gap-6">
+  <!-- Desktop Menu -->
+  @if (menus.length > 0) {
+    <nav class="hidden md:flex gap-6">
+      @for (menu of menus; track menu.label) {
+        <button
+          class="cursor-pointer px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition"
+          (click)="menu.route ? navigate(menu.route) : (menu.sectionId ? scrollToSection(menu.sectionId) : null)"
+        >
+          {{ menu.label }}
+        </button>
+      }
+    </nav>
+  }
+
+  <!-- Mobile Menu Button -->
+  <button
+    class="md:hidden p-2 rounded hover:bg-gray-100"
+    (click)="isMobileMenuOpen = true"
+    aria-label="Open mobile menu"
+  >
+    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+</header>
+
+<!-- Mobile Side Menu -->
+@if (isMobileMenuOpen) {
+  <div class="fixed inset-0 z-50 flex">
+    <!-- Overlay -->
+    <div
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm"
+      (click)="isMobileMenuOpen = false"
+    ></div>
+
+    <!-- Side Drawer -->
+    <div class="relative w-64 bg-white h-full shadow-lg flex flex-col p-4">
+      <!-- Close Button -->
+      <button
+        class="absolute top-4 right-4 p-2 rounded hover:bg-gray-100"
+        (click)="isMobileMenuOpen = false"
+        aria-label="Close menu"
+      >
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Menu Items -->
+      <nav class="mt-8 flex flex-col gap-3">
         @for (menu of menus; track menu.label) {
           <button
-            class="cursor-pointer px-3 py-1 rounded hover:bg-gray-200"
-            (click)="menu.route ? navigate(menu.route) : (menu.sectionId ? scrollToSection(menu.sectionId) : null)">
+            class="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-gray-100 transition"
+            (click)="
+              isMobileMenuOpen = false;
+              menu.route ? navigate(menu.route) : (menu.sectionId ? scrollToSection(menu.sectionId) : null)
+            "
+          >
             {{ menu.label }}
           </button>
         }
       </nav>
-    }
-    
-</header>
-  
+    </div>
+  </div>
+}

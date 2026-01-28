@@ -1,26 +1,131 @@
-<section id="how-it-works" class="space-y-6">
-    <h2 class="text-2xl font-bold">How It Works</h2>
-  
-    <div class="flex gap-12">
-      <!-- Workflow 1: Workspace Management -->
-      <div class="flex flex-col items-center">
-        <img src="assets/workflow-upload.png" alt="Upload docs" class="h-32"/>
-        <p class="text-center mt-2 max-w-xs">
-          Upload documents, view AI summary, flashcards, quizzes.
-        </p>
-      </div>
-  
-      <div class="self-center">
-        <img src="assets/arrow-right.png" class="h-6" alt="Next"/>
-      </div>
-  
-      <!-- Workflow 2: Collections -->
-      <div class="flex flex-col items-center">
-        <img src="assets/workflow-collection.png" alt="Collections" class="h-32"/>
-        <p class="text-center mt-2 max-w-xs">
-          Group your workspaces into collections, manage & share them.
-        </p>
-      </div>
+<section id="how-it-works" class="py-5 md:py-5 max-w-7xl mx-auto space-y-10 px-4">
+  <h2 class="text-2xl md:text-3xl font-bold text-center">
+    How It Works
+  </h2>
+
+  <!-- Steps Container -->
+<div
+class="flex flex-col items-center
+       md:flex-row md:items-start md:justify-between
+       gap-8"
+>
+
+<!-- STEP 1 -->
+<div class="hiw-step flex flex-col items-center text-center shrink-0">
+  <img
+    src="assets/illustrations/how-it-works/undraw_web-app_141a.svg"
+    class="w-16 h-16 md:w-20 md:h-20"
+  />
+  <h3 class="text-base md:text-lg font-semibold mt-3">
+    Workspace Home
+  </h3>
+  <p class="text-xs md:text-sm text-gray-600 mt-1">
+    All your workspaces at a glance.
+  </p>
+
+  <!-- Arrow (desktop only) -->
+  <img
+    src="assets/illustrations/how-it-works/arrow-right.svg"
+    class="hidden md:block w-6 h-6 mt-4 opacity-60"
+  />
+</div>
+
+<!-- STEP 2 -->
+<div class="hiw-step flex flex-col items-center text-center shrink-0">
+  <img
+    src="assets/undraw_add-post_prex.svg"
+    class="w-16 h-16 md:w-20 md:h-20"
+  />
+  <h3 class="text-base md:text-lg font-semibold mt-3">
+    Create Workspace
+  </h3>
+  <p class="text-xs md:text-sm text-gray-600 mt-1">
+    Start a workspace for any topic or goal.
+  </p>
+
+  <img
+    src="assets/illustrations/how-it-works/arrow-right.svg"
+    class="hidden md:block w-6 h-6 mt-4 opacity-60"
+  />
+</div>
+
+<!-- STEP 3 -->
+<div class="hiw-step flex flex-col items-center text-center shrink-0">
+  <img
+    src="assets/undraw_upload_cucu.svg"
+    class="w-16 h-16 md:w-20 md:h-20"
+  />
+  <h3 class="text-base md:text-lg font-semibold mt-3">
+    Add Sources
+  </h3>
+  <p class="text-xs md:text-sm text-gray-600 mt-1">
+    Docs, links, images, videos.
+  </p>
+
+  <img
+    src="assets/illustrations/how-it-works/arrow-right.svg"
+    class="hidden md:block w-6 h-6 mt-4 opacity-60"
+  />
+</div>
+
+<!-- STEP 4 -->
+<div class="hiw-step flex flex-col items-center text-center shrink-0">
+  <img
+    src="assets/undraw_search-app_cpm0.svg"
+    class="w-16 h-16 md:w-20 md:h-20"
+  />
+  <h3 class="text-base md:text-lg font-semibold mt-3">
+    Workspace View
+  </h3>
+  <p class="text-xs md:text-sm text-gray-600 mt-1">
+    Sources, notes, and AI together.
+  </p>
+
+  <img
+    src="assets/illustrations/how-it-works/arrow-right.svg"
+    class="hidden md:block w-6 h-6 mt-4 opacity-60"
+  />
+</div>
+
+<!-- STEP 5 -->
+<div class="hiw-step flex flex-col items-center text-center shrink-0">
+  <img
+    src="assets/illustrations/how-it-works/undraw_image-folder_ep25.svg"
+    class="w-16 h-16 md:w-20 md:h-20"
+  />
+  <h3 class="text-base md:text-lg font-semibold mt-3">
+    Collections
+  </h3>
+  <p class="text-xs md:text-sm text-gray-600 mt-1">
+    Organize workspaces into learning paths.
+  </p>
+</div>
+
+</div>
+
+  <!-- AI Features Section -->
+  <div class="text-center space-y-6 mt-10">
+    <h3 class="text-lg md:text-xl font-semibold">
+      AI inside every workspace
+    </h3>
+
+    <div class="flex flex-wrap justify-center gap-4 text-xs md:text-sm text-gray-600">
+      <span>❓ Q&amp;A</span>
+      <span>💡 Insights</span>
+      <span>💬 Chat</span>
+      <span>🔍 Research</span>
+      <span>🔊 Text → Speech</span>
     </div>
-  </section>
-  
+
+    <!-- Call-to-Action Button -->
+    <a href="#public-workspaces"
+       class="inline-flex items-center gap-2 rounded-full
+              border border-indigo-500/40 px-5 py-2
+              text-sm md:text-base font-medium text-indigo-600
+              bg-indigo-50 hover:bg-indigo-100
+              hover:border-indigo-500
+              transition-all shadow-sm hover:shadow-md mt-4">
+      Try with public workspaces →
+    </a>
+  </div>
+</section>

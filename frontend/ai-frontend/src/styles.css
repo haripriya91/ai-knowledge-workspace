@@ -4,5 +4,36 @@
 /* Tailwind way in class attributes, or you can put in CSS file */
 .tab-section {
     scroll-margin-top: 4rem; /* same height as header, so anchor scroll stops below sticky header */
-    min-height: calc(100vh - 4rem); /* full viewport minus header */
   }
+/* Import Swiper styles */
+@import 'swiper/css';
+@import 'swiper/css/pagination';
+@import 'swiper/css/autoplay';
+
+/* Optional: Custom styles for better appearance */
+swiper-container {
+  --swiper-pagination-bottom: 0;
+  --swiper-pagination-color: #4f46e5;
+  --swiper-pagination-bullet-inactive-color: #d1d5db;
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-pagination-bullet-size: 12px;
+  --swiper-pagination-bullet-horizontal-gap: 6px;
+}
+
+.swiper-pagination {
+  position: relative !important;
+  margin-top: 2rem !important;
+}
+
+.hiw-step {
+  @apply flex flex-col items-center text-center max-w-40 space-y-2;
+}
+
+.hiw-icon-sm {
+  @apply h-20 w-auto;
+}
+
+.hiw-arrow-sm {
+  @apply h-6 w-auto opacity-60 mt-6;
+}
+
