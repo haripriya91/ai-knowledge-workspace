@@ -1,98 +1,155 @@
-import { Component } from '@angular/core';
-
+import { Component, AfterViewInit, ViewChild,  CUSTOM_ELEMENTS_SCHEMA, OnDestroy  } from '@angular/core';
+import { register } from 'swiper/element/bundle';
 @Component({
   selector: 'app-hero-section',
   imports: [],
   templateUrl: './hero-section.component.html',
-  styleUrl: './hero-section.component.css'
+  styleUrl: './hero-section.component.css',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class HeroSectionComponent { 
-  visibleCount = 3;
-  currentSlide = 0;
+export class HeroSectionComponent implements AfterViewInit {
+ // Use ElementRef with proper typing instead of 'any'
+ @ViewChild('swiper', { static: true }) swiperEl!: any;
 
+  
+  // Make public for template access
+  readonly AUTO_SLIDE_DELAY = 3000; // 3 seconds
+  
+  private autoSlideInterval: any;
+  public isPaused = false;
   slides = [
     {
-      text: 'Save and organize research instantly',
       icon: 'assets/undraw_add-file_lf11.svg',
+      text: 'Save files, links, and notes in one place'
     },
     {
-      text: 'Ask AI questions across your notes',
-      icon: 'assets/undraw_audiobook_0h9f.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_continuous-learning_a1ld.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_document-analysis_3c0y.svg',
-    },
-    {
-      text: 'Save and organize research instantly',
       icon: 'assets/undraw_document-search_2o7x.svg',
+      text: 'Search instantly across all your knowledge'
     },
     {
-      text: 'Ask AI questions across your notes',
-      icon: 'assets/undraw_idea_hz8b.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_image-upload_7b3b.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_document-analysis_3c0y.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_my-workspace_5961.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
       icon: 'assets/undraw_notebook_jy1h.svg',
+      text: 'Organize content into smart workspaces'
     },
     {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_organizing-data_uns9.svg',
+      icon: 'assets/undraw_audiobook_0h9f.svg',
+      text: 'Ask AI questions across your saved notes'
     },
     {
-      text: 'Build ideas with structured workspaces',
+      icon: 'assets/undraw_document-analysis_3c0y.svg',
+      text: 'Get summaries and insights automatically'
+    },
+    {
+      icon: 'assets/undraw_image-upload_7b3b.svg',
+      text: 'Upload PDFs, images, and documents easily'
+    },
+    {
+      icon: 'assets/undraw_my-workspace_5961.svg',
+      text: 'Build ideas step by step inside workspaces'
+    },
+    {
       icon: 'assets/undraw_private-files_m2bw.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_product-explainer_b7ft.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_search-app_cpm0.svg',
-    },
-    {
-      text: 'Build ideas with structured workspaces',
-      icon: 'assets/undraw_to-do-list_eoia.svg',
-    },
+      text: 'Keep your research private and secure'
+    }
   ];
-  
-  
-   // % to move per slide
-   slideWidth = 100 / this.visibleCount;
 
-   // number of dots/pages
-   get dots() {
-     return Array(this.slides.length - this.visibleCount + 1);
-   }
+ swiperParams = {
+  slidesPerView: 3,
+  spaceBetween: 30,
+  centeredSlides: true,
+  loop: true,
+  pagination: {
+    clickable: true,
+  },
+  breakpoints: {
+    320: { slidesPerView: 1, spaceBetween: 20 },
+    640: { slidesPerView: 2, spaceBetween: 20 },
+    1024: { slidesPerView: 3, spaceBetween: 30 }
+  },
+  on: {
+    init: () => this.startAutoSlide(),
+    slideChange: () => this.resetAutoSlide(),
+    touchStart: () => this.pauseAutoSlide(),
+    touchEnd: () => this.resumeAutoSlide(),
+    mouseEnter: () => this.pauseAutoSlide(),
+    mouseLeave: () => this.resumeAutoSlide(),
+  }
+};
+
+constructor() {
+  register();
+}
+
+ngAfterViewInit() {
+  setTimeout(() => {
+    if (this.swiperEl?.nativeElement) {
+      Object.assign(this.swiperEl.nativeElement, this.swiperParams);
+    }
+  }, 0);
+}
+
+ngOnDestroy() {
+  this.stopAutoSlide();
+}
+
+private startAutoSlide(): void {
+  this.stopAutoSlide();
+  
+  this.autoSlideInterval = setInterval(() => {
+    if (!this.isPaused && this.swiperEl?.nativeElement?.swiper) {
+      this.swiperEl.nativeElement.swiper.slideNext();
+    }
+  }, this.AUTO_SLIDE_DELAY);
+}
+
+private stopAutoSlide(): void {
+  if (this.autoSlideInterval) {
+    clearInterval(this.autoSlideInterval);
+    this.autoSlideInterval = null;
+  }
+}
+
+private pauseAutoSlide(): void {
+  this.isPaused = true;
+}
+
+private resumeAutoSlide(): void {
+  this.isPaused = false;
+}
+
+private resetAutoSlide(): void {
+  this.stopAutoSlide();
+  this.startAutoSlide();
+}
+
+nextSlide(): void {
+  this.pauseAutoSlide();
+  this.swiperEl?.nativeElement?.swiper?.slideNext();
+  
+  setTimeout(() => {
+    this.resumeAutoSlide();
+    this.resetAutoSlide();
+  }, 100);
+}
+
+prevSlide(): void {
+  this.pauseAutoSlide();
+  this.swiperEl?.nativeElement?.swiper?.slidePrev();
+  
+  setTimeout(() => {
+    this.resumeAutoSlide();
+    this.resetAutoSlide();
+  }, 100);
+}
+
+// Public methods for template
+playSlides(): void {
+  this.resumeAutoSlide();
+  this.startAutoSlide();
+}
+
+pauseSlides(): void {
+  this.pauseAutoSlide();
+  this.stopAutoSlide();
+}
  
-   goToSlide(index: number) {
-     this.currentSlide = index;
-   }
- 
-   ngOnInit() {
-     setInterval(() => {
-       if (this.currentSlide < this.slides.length - this.visibleCount) {
-         this.currentSlide++;
-       } else {
-         this.currentSlide = 0;
-       }
-     }, 6000); // slow & smooth
-   }
 }
