@@ -3,105 +3,81 @@
     How It Works
   </h2>
 
-  <!-- Steps Container -->
-<div
-class="flex flex-col items-center
-       md:flex-row md:items-start md:justify-between
-       gap-8"
->
+  <!-- Steps Container with CSS arrows -->
+  <div class="steps-container">
+    <div class="flex flex-col items-center md:flex-row md:justify-between gap-8 md:gap-0">
+      
+      <!-- STEP 1 with arrow pseudo-element -->
+      <div class="step-with-arrow flex flex-col items-center text-center px-4 md:px-0 md:flex-1 relative">
+        <img
+          src="assets/illustrations/how-it-works/undraw_web-app_141a.svg"
+          class="w-16 h-16 md:w-20 md:h-20"
+        />
+        <h3 class="text-base md:text-xl font-semibold mt-3">
+          Workspace Home
+        </h3>
+        <p class="text-xs md:text-sm text-gray-600 mt-1 max-w-xs">
+          All your workspaces at a glance.
+        </p>
+      </div>
 
-<!-- STEP 1 -->
-<div class="hiw-step flex flex-col items-center text-center shrink-0">
-  <img
-    src="assets/illustrations/how-it-works/undraw_web-app_141a.svg"
-    class="w-16 h-16 md:w-20 md:h-20"
-  />
-  <h3 class="text-base md:text-lg font-semibold mt-3">
-    Workspace Home
-  </h3>
-  <p class="text-xs md:text-sm text-gray-600 mt-1">
-    All your workspaces at a glance.
-  </p>
+      <!-- STEP 2 with arrow pseudo-element -->
+      <div class="step-with-arrow flex flex-col items-center text-center px-4 md:px-0 md:flex-1 relative">
+        <img
+          src="assets/undraw_add-post_prex.svg"
+          class="w-16 h-16 md:w-20 md:h-20"
+        />
+        <h3 class="text-base md:text-xl font-semibold mt-3">
+          Create Workspace
+        </h3>
+        <p class="text-xs md:text-sm text-gray-600 mt-1 max-w-xs">
+          Start a workspace for any topic or goal.
+        </p>
+      </div>
 
-  <!-- Arrow (desktop only) -->
-  <img
-    src="assets/illustrations/how-it-works/arrow-right.svg"
-    class="hidden md:block w-6 h-6 mt-4 opacity-60"
-  />
-</div>
+      <!-- STEP 3 with arrow pseudo-element -->
+      <div class="step-with-arrow flex flex-col items-center text-center px-4 md:px-0 md:flex-1 relative">
+        <img
+          src="assets/undraw_upload_cucu.svg"
+          class="w-16 h-16 md:w-20 md:h-20"
+        />
+        <h3 class="text-base md:text-xl font-semibold mt-3">
+          Add Sources
+        </h3>
+        <p class="text-xs md:text-sm text-gray-600 mt-1 max-w-xs">
+          Docs, links, images, videos.
+        </p>
+      </div>
 
-<!-- STEP 2 -->
-<div class="hiw-step flex flex-col items-center text-center shrink-0">
-  <img
-    src="assets/undraw_add-post_prex.svg"
-    class="w-16 h-16 md:w-20 md:h-20"
-  />
-  <h3 class="text-base md:text-lg font-semibold mt-3">
-    Create Workspace
-  </h3>
-  <p class="text-xs md:text-sm text-gray-600 mt-1">
-    Start a workspace for any topic or goal.
-  </p>
+      <!-- STEP 4 with arrow pseudo-element -->
+      <div class="step-with-arrow flex flex-col items-center text-center px-4 md:px-0 md:flex-1 relative">
+        <img
+          src="assets/undraw_search-app_cpm0.svg"
+          class="w-16 h-16 md:w-20 md:h-20"
+        />
+        <h3 class="text-base md:text-xl font-semibold mt-3">
+          Workspace View
+        </h3>
+        <p class="text-xs md:text-sm text-gray-600 mt-1 max-w-xs">
+          Sources, notes, and AI together.
+        </p>
+      </div>
 
-  <img
-    src="assets/illustrations/how-it-works/arrow-right.svg"
-    class="hidden md:block w-6 h-6 mt-4 opacity-60"
-  />
-</div>
-
-<!-- STEP 3 -->
-<div class="hiw-step flex flex-col items-center text-center shrink-0">
-  <img
-    src="assets/undraw_upload_cucu.svg"
-    class="w-16 h-16 md:w-20 md:h-20"
-  />
-  <h3 class="text-base md:text-lg font-semibold mt-3">
-    Add Sources
-  </h3>
-  <p class="text-xs md:text-sm text-gray-600 mt-1">
-    Docs, links, images, videos.
-  </p>
-
-  <img
-    src="assets/illustrations/how-it-works/arrow-right.svg"
-    class="hidden md:block w-6 h-6 mt-4 opacity-60"
-  />
-</div>
-
-<!-- STEP 4 -->
-<div class="hiw-step flex flex-col items-center text-center shrink-0">
-  <img
-    src="assets/undraw_search-app_cpm0.svg"
-    class="w-16 h-16 md:w-20 md:h-20"
-  />
-  <h3 class="text-base md:text-lg font-semibold mt-3">
-    Workspace View
-  </h3>
-  <p class="text-xs md:text-sm text-gray-600 mt-1">
-    Sources, notes, and AI together.
-  </p>
-
-  <img
-    src="assets/illustrations/how-it-works/arrow-right.svg"
-    class="hidden md:block w-6 h-6 mt-4 opacity-60"
-  />
-</div>
-
-<!-- STEP 5 -->
-<div class="hiw-step flex flex-col items-center text-center shrink-0">
-  <img
-    src="assets/illustrations/how-it-works/undraw_image-folder_ep25.svg"
-    class="w-16 h-16 md:w-20 md:h-20"
-  />
-  <h3 class="text-base md:text-lg font-semibold mt-3">
-    Collections
-  </h3>
-  <p class="text-xs md:text-sm text-gray-600 mt-1">
-    Organize workspaces into learning paths.
-  </p>
-</div>
-
-</div>
+      <!-- STEP 5 (no arrow after this one) -->
+      <div class="flex flex-col items-center text-center px-4 md:px-0 md:flex-1">
+        <img
+          src="assets/illustrations/how-it-works/undraw_image-folder_ep25.svg"
+          class="w-16 h-16 md:w-20 md:h-20"
+        />
+        <h3 class="text-base md:text-xl font-semibold mt-3">
+          Collections
+        </h3>
+        <p class="text-xs md:text-sm text-gray-600 mt-1 max-w-xs">
+          Organize workspaces into learning paths.
+        </p>
+      </div>
+    </div>
+  </div>
 
   <!-- AI Features Section -->
   <div class="text-center space-y-6 mt-10">
