@@ -1,11 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../features/auth/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule,RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  private fb = inject(NonNullableFormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
+  loading = false;
+  error: string | null = null;
+
+  form = this.fb.group({
+    email: [''],
+    password: ['']
+  });
+
+  submit(): void {
+    if (this.form.invalid) return;
+
+    this.loading = true;
+    this.error = null;
+
+    const { email, password } = this.form.getRawValue();
+
+    this.auth.login(email, password).subscribe({
+      next: () => {
+        const returnUrl =
+          this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+
+        this.router.navigateByUrl(returnUrl);
+      },
+      error: () => {
+        this.loading = false;
+        this.error = 'Invalid email or password';
+      }
+    });
+  }
 }

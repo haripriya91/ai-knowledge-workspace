@@ -1,7 +1,9 @@
 <header class="sticky top-0 z-50 bg-white shadow px-4 md:px-6 py-3 flex items-center justify-between">
   <!-- Logo -->
   <div class="flex items-center gap-2">
-    <img src="assets/logo.svg" alt="AI Knowledge Workspace" class="h-7 md:h-8 w-auto" />
+    <button (click)="goHome()">
+      <img src="assets/logo.svg" alt="AI Knowledge Workspace" class="h-7 md:h-8 w-auto" />
+    </button>
   </div>
 
   <!-- Desktop Menu -->
@@ -16,6 +18,27 @@
         </button>
       }
     </nav>
+  }
+  @if (isLoggedIn) {
+    <div class="relative hidden md:block">
+      <button
+        class="flex items-center gap-2"
+        (click)="profileOpen = !profileOpen"
+      >
+        <img src="assets/avatar.png"
+             class="h-8 w-8 rounded-full" />
+      </button>
+  
+      @if (profileOpen) {
+        <div class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow">
+          <button class="menu-item">Edit Profile</button>
+          <button class="menu-item">Change Password</button>
+          <button class="menu-item text-red-600" (click)="logout()">
+            Logout
+          </button>
+        </div>
+      }
+    </div>
   }
 
   <!-- Mobile Menu Button -->
@@ -66,6 +89,15 @@
           </button>
         }
       </nav>
+      @if (isLoggedIn) {
+        <div class="mt-6 border-t pt-4">
+          <button class="menu-item w-full">Edit Profile</button>
+          <button class="menu-item w-full">Change Password</button>
+          <button class="menu-item w-full text-red-600" (click)="logout()">
+            Logout
+          </button>
+        </div>
+      }
     </div>
   </div>
 }

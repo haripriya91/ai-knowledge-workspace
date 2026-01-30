@@ -1,7 +1,7 @@
-import { Component ,OnInit} from '@angular/core';
+import { Component ,inject,OnInit} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../../../features/auth/auth.service';
 
 interface Menu {
   label: string;
@@ -19,18 +19,19 @@ export class HeaderComponent {
   isLoggedIn = false;
   menus: Menu[] = [];
   isMobileMenuOpen = false;
+  profileOpen = false;
+  private auth = inject(AuthService);
 
   nonLoggedInMenus = [
     { label: 'Overview', sectionId: 'hero' },
     { label: 'How it Works', sectionId: 'how-it-works' },
     { label: 'Public Workspaces', sectionId: 'public-workspaces' },
-    { label: 'Login', route: '/login' },
-    { label: 'Signup', route: '/signup' },
+    { label: 'Login', route: '/auth/login' },
+    { label: 'Signup', route: '/auth/signup' },
   ];
 
   loggedInMenus = [
     { label: 'Dashboard', route: '/dashboard' },
-    { label: 'Workspaces', route: '/workspaces' }
   ];
   constructor(private router: Router) {}
 
@@ -53,5 +54,15 @@ export class HeaderComponent {
     } else if (menu.sectionId) {
       this.scrollToSection(menu.sectionId);
     }
+  }
+  goHome() {
+    this.auth.isLoggedIn()
+      ? this.router.navigate(['/dashboard'])
+      : this.router.navigate(['/']);
+  }
+  logout() {
+    this.auth.logout();
+    this.profileOpen = false;
+    this.router.navigate(['/']);
   }
 }

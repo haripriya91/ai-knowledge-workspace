@@ -11,6 +11,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
 
@@ -26,7 +27,7 @@ export const routes: Routes = [
   
     /* ---------- AUTH ---------- */
     {
-      path: '',
+      path: 'auth',
       component: AuthLayoutComponent,
       children: [
         { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
@@ -40,8 +41,8 @@ export const routes: Routes = [
       component: AppLayoutComponent,
       canActivate: [authGuard],
       children: [
-        { path: 'dashboard', component: HomeComponent }, // reuse home for now
-        { path: 'my-workspaces', component: HomeComponent }
+        { path: 'dashboard', component: DashboardComponent },
+        { path: 'workspace/:id', component: WorkspaceDetailsComponent }
       ]
     },
   

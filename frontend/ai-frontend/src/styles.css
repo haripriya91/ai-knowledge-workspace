@@ -36,4 +36,41 @@ swiper-container {
 .hiw-arrow-sm {
   @apply h-6 w-auto opacity-60 mt-6;
 }
+/* Ensure steps have equal width on desktop */
+@media (min-width: 768px) {
+  .hiw-step {
+    flex: 1;
+    min-width: 0; /* Allows flex items to shrink below content size */
+    position: relative;
+    z-index: 10; /* Ensure steps are above arrows */
+  }
+  
+  /* If you want the arrows to be centered between steps */
+  .arrow-position {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+/* CSS for arrow positioning */
+@media (min-width: 768px) {
+  .step-with-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 40px; /* Adjust based on your icon height */
+    width: 24px;
+    height: 24px;
+    background-image: url('assets/illustrations/how-it-works/arrow-right.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    transform: translateX(50%);
+  }
+  
+  /* Hide arrow for the last item */
+  .steps-container > div > div:last-child::after {
+    display: none;
+  }
+}
 
