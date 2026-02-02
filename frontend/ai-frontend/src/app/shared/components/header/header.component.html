@@ -8,45 +8,80 @@
 
   <!-- Desktop Menu -->
   @if (menus.length > 0) {
-    <nav class="hidden md:flex gap-6">
-      @for (menu of menus; track menu.label) {
-        <button
-          class="cursor-pointer px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition"
-          (click)="menu.route ? navigate(menu.route) : (menu.sectionId ? scrollToSection(menu.sectionId) : null)"
-        >
-          {{ menu.label }}
-        </button>
-      }
-    </nav>
+  <nav class="hidden md:flex gap-6">
+    @for (menu of menus; track menu.label) {
+    <button class="cursor-pointer px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition"
+      (click)="menu.route ? navigate(menu.route) : (menu.sectionId ? scrollToSection(menu.sectionId) : null)">
+      {{ menu.label }}
+    </button>
+    }
+  </nav>
   }
   @if (isLoggedIn) {
-    <div class="relative hidden md:block">
-      <button
-        class="flex items-center gap-2"
-        (click)="profileOpen = !profileOpen"
+  <div class="relative hidden md:block">
+    <button class="flex items-center gap-2 rounded-full hover:bg-gray-100 px-2 py-1 transition"
+      (click)="profileOpen = !profileOpen">
+      <img src="assets/avatar.png" class="h-8 w-8 rounded-full object-cover" alt="Profile" />
+      <span class="text-sm font-medium text-gray-700 hidden lg:block">
+        Haripriya
+      </span>
+    </button>
+
+    @if (profileOpen) {
+      <div
+        class="absolute right-0 mt-3 w-72 rounded-xl bg-white shadow-xl z-50"
       >
-        <img src="assets/avatar.png"
-             class="h-8 w-8 rounded-full" />
-      </button>
-  
-      @if (profileOpen) {
-        <div class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow">
-          <button class="menu-item">Edit Profile</button>
-          <button class="menu-item">Change Password</button>
-          <button class="menu-item text-red-600" (click)="logout()">
+        <!-- Profile Info -->
+        <div class="flex items-center gap-3 p-4">
+          <img
+            src="assets/avatar.png"
+            class="h-12 w-12 rounded-full object-cover"
+          />
+          <div>
+            <p class="text-sm font-semibold text-gray-800">
+              Haripriya PK
+            </p>
+            <p class="text-xs text-gray-500">
+              haripriya&#64;email.com
+            </p>
+          </div>
+        </div>
+    
+        <!-- Actions row -->
+        <div class="flex gap-2 px-4 pb-3">
+          <button
+            class="flex-1 rounded-lg bg-gray-100 hover:bg-gray-200
+                   text-xs font-medium py-2 transition"
+          >
+            Edit profile
+          </button>
+    
+          <button
+            class="flex-1 rounded-lg bg-gray-100 hover:bg-gray-200
+                   text-xs font-medium py-2 transition"
+          >
+            Change password
+          </button>
+        </div>
+    
+        <!-- Logout -->
+        <div class="px-4 pb-4">
+          <button
+            class="w-full rounded-lg py-2 text-sm font-medium
+                   text-red-600 hover:bg-red-50 transition"
+            (click)="logout()"
+          >
             Logout
           </button>
         </div>
-      }
-    </div>
+      </div>
+    }
+  </div>
   }
 
   <!-- Mobile Menu Button -->
-  <button
-    class="md:hidden p-2 rounded hover:bg-gray-100"
-    (click)="isMobileMenuOpen = true"
-    aria-label="Open mobile menu"
-  >
+  <button class="md:hidden p-2 rounded hover:bg-gray-100" (click)="isMobileMenuOpen = true"
+    aria-label="Open mobile menu">
     <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
     </svg>
@@ -55,49 +90,40 @@
 
 <!-- Mobile Side Menu -->
 @if (isMobileMenuOpen) {
-  <div class="fixed inset-0 z-50 flex">
-    <!-- Overlay -->
-    <div
-      class="fixed inset-0 bg-black/50 backdrop-blur-sm"
-      (click)="isMobileMenuOpen = false"
-    ></div>
+<div class="fixed inset-0 z-50 flex">
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" (click)="isMobileMenuOpen = false"></div>
 
-    <!-- Side Drawer -->
-    <div class="relative w-64 bg-white h-full shadow-lg flex flex-col p-4">
-      <!-- Close Button -->
-      <button
-        class="absolute top-4 right-4 p-2 rounded hover:bg-gray-100"
-        (click)="isMobileMenuOpen = false"
-        aria-label="Close menu"
-      >
-        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+  <!-- Side Drawer -->
+  <div class="relative w-64 bg-white h-full shadow-lg flex flex-col p-4">
+    <!-- Close Button -->
+    <button class="absolute top-4 right-4 p-2 rounded hover:bg-gray-100" (click)="isMobileMenuOpen = false"
+      aria-label="Close menu">
+      <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
 
-      <!-- Menu Items -->
-      <nav class="mt-8 flex flex-col gap-3">
-        @for (menu of menus; track menu.label) {
-          <button
-            class="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-gray-100 transition"
-            (click)="
+    <!-- Menu Items -->
+    <nav class="mt-8 flex flex-col gap-3">
+      @for (menu of menus; track menu.label) {
+      <button class="w-full text-left px-3 py-2 rounded text-sm font-medium hover:bg-gray-100 transition" (click)="
               isMobileMenuOpen = false;
               menu.route ? navigate(menu.route) : (menu.sectionId ? scrollToSection(menu.sectionId) : null)
-            "
-          >
-            {{ menu.label }}
-          </button>
-        }
-      </nav>
-      @if (isLoggedIn) {
-        <div class="mt-6 border-t pt-4">
-          <button class="menu-item w-full">Edit Profile</button>
-          <button class="menu-item w-full">Change Password</button>
-          <button class="menu-item w-full text-red-600" (click)="logout()">
-            Logout
-          </button>
-        </div>
+            ">
+        {{ menu.label }}
+      </button>
       }
+    </nav>
+    @if (isLoggedIn) {
+    <div class="mt-6 border-t pt-4">
+      <button class="menu-item w-full">Edit Profile</button>
+      <button class="menu-item w-full">Change Password</button>
+      <button class="menu-item w-full text-red-600" (click)="logout()">
+        Logout
+      </button>
     </div>
+    }
   </div>
+</div>
 }
