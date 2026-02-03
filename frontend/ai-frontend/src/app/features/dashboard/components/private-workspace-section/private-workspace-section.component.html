@@ -1,1 +1,21 @@
-<p>private-workspace-section works!</p>
+<section class="space-y-6">
+
+  <!-- Toolbar -->
+  <div
+    class="flex items-center justify-end"
+  >
+    <!-- View Toggle (Desktop only) -->
+    <div class="hidden md:flex">
+      <app-view-toggle
+        [view]="view"
+        (viewChange)="onViewChange($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Workspace List -->
+  <app-workspace-list
+    [workspaces]="filteredWorkspaces"
+    [view]="effectiveView"
+  />
+</section>
