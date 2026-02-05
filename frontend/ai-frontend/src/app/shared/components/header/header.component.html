@@ -17,7 +17,7 @@
     }
   </nav>
   }
-  @if (isLoggedIn) {
+  @if (isLoggedIn()) {
   <div class="relative hidden md:block">
     <button class="flex items-center gap-2 rounded-full hover:bg-gray-100 px-2 py-1 transition"
       (click)="profileOpen = !profileOpen">
@@ -115,7 +115,7 @@
       </button>
       }
     </nav>
-    @if (isLoggedIn) {
+    @if (isLoggedIn()) {
     <div class="mt-6 border-t pt-4">
       <button class="menu-item w-full">Edit Profile</button>
       <button class="menu-item w-full">Change Password</button>

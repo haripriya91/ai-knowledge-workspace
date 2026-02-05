@@ -16,12 +16,13 @@ interface Menu {
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  isLoggedIn = false;
   menus: Menu[] = [];
   isMobileMenuOpen = false;
   profileOpen = false;
   private auth = inject(AuthService);
 
+  isLoggedIn = this.auth.isLoggedIn;
+  user = this.auth.user;
   nonLoggedInMenus = [
     { label: 'Overview', sectionId: 'hero' },
     { label: 'How it Works', sectionId: 'how-it-works' },
@@ -36,8 +37,7 @@ export class HeaderComponent {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    this.isLoggedIn = !!localStorage.getItem('access_token');
-    this.menus = this.isLoggedIn ? this.loggedInMenus : this.nonLoggedInMenus;
+    this.menus = this.isLoggedIn() ? this.loggedInMenus : this.nonLoggedInMenus;
   }
 
   scrollToSection(sectionId: string) {
