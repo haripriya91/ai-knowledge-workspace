@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +20,8 @@ export class LoginComponent {
   error: string | null = null;
 
   form = this.fb.group({
-    email: [''],
-    password: ['']
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
   });
 
   submit(): void {
@@ -32,18 +31,17 @@ export class LoginComponent {
     this.error = null;
 
     const { email, password } = this.form.getRawValue();
+    try {
+      // ✅ signal-based login (sync)
+      this.auth.login(email, password);
 
-    this.auth.login(email, password).subscribe({
-      next: () => {
-        const returnUrl =
-          this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+      const returnUrl =
+        this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
 
-        this.router.navigateByUrl(returnUrl);
-      },
-      error: () => {
-        this.loading = false;
-        this.error = 'Invalid email or password';
-      }
-    });
+      this.router.navigateByUrl(returnUrl);
+    } catch {
+      this.error = 'Invalid email or password';
+      this.loading = false;
+    }
   }
 }

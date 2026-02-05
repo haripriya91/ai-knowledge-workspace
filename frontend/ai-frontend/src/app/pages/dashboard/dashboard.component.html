@@ -1,1 +1,59 @@
-<p>dashboard works!</p>
+<!-- Dashboard Header -->
+<section class="px-4 md:px-6 max-w-7xl mx-auto space-y-6">
+
+  <!-- Header row -->
+  <div
+    class="flex flex-col gap-4
+           md:flex-row md:items-center md:justify-between"
+  >
+    <h1 class="text-2xl font-semibold">Workspaces</h1>
+
+    <!-- Create button -->
+    <button
+      class="flex items-center gap-2 px-4 py-2
+             rounded-lg bg-black text-white
+             self-start md:self-auto"
+    >
+      + Create workspace
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-4 border-b">
+    <button
+      class="px-2 py-2 text-sm font-medium
+             border-b-2 transition"
+      [class.border-black]="activeTab === 'private'"
+      [class.text-black]="activeTab === 'private'"
+      [class.text-gray-500]="activeTab !== 'private'"
+      (click)="activeTab = 'private'"
+    >
+      Private
+    </button>
+
+    <button
+      class="px-2 py-2 text-sm font-medium
+             border-b-2 transition"
+      [class.border-black]="activeTab === 'public'"
+      [class.text-black]="activeTab === 'public'"
+      [class.text-gray-500]="activeTab !== 'public'"
+      (click)="activeTab = 'public'"
+    >
+      Public
+    </button>
+  </div>
+
+</section>
+
+<!-- Workspace Content -->
+<section class="px-4 md:px-6 max-w-7xl mx-auto mt-6">
+
+  @if (activeTab === 'private') {
+    <app-private-workspace-section />
+  }
+
+  @if (activeTab === 'public') {
+    <app-public-workspace-section />
+  }
+
+</section>

@@ -1,7 +1,95 @@
-<aside class="w-64 border-r p-4 bg-gray-50">
-    <ul class="space-y-3">
-      <li><a routerLink="/workspaces">Workspaces</a></li>
-      <li><a routerLink="/collections">Collections</a></li>
-      <li><a routerLink="/ai">AI Assistant</a></li>
-    </ul>
-  </aside>
+<!-- DESKTOP SIDEBAR -->
+<aside
+  class="hidden md:flex h-screen sticky top-0
+         transition-all duration-300
+         bg-gray-50 border-r"
+  [class.w-50]="!collapsed"
+  [class.w-16]="collapsed"
+>
+  <div class="flex flex-col h-full relative w-full">
+
+    <!-- Menu -->
+    <nav class="flex-1 px-3 py-4">
+      <div class="flex flex-col gap-3">
+        <a
+          routerLink="/workspaces"
+          class="sidebar-item flex flex-col items-center gap-1 px-2 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <div class="text-xl">🗂️</div>
+          @if (!collapsed) {
+            <span class="text-sm font-medium text-center">Workspaces</span>
+          }
+        </a>
+
+        <a
+          routerLink="/collections"
+          class="sidebar-item flex flex-col items-center gap-1 px-2 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <div class="text-xl">📁</div>
+          @if (!collapsed) {
+            <span class="text-sm font-medium text-center">Collections</span>
+          }
+        </a>
+
+        <a
+          routerLink="/ai"
+          class="sidebar-item flex flex-col items-center gap-1 px-2 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <div class="text-xl">🤖</div>
+          @if (!collapsed) {
+            <span class="text-sm font-medium text-center">AI Assistant</span>
+          }
+        </a>
+      </div>
+    </nav>
+
+    <!-- Collapse Toggle -->
+    <button
+      class="absolute top-1/2 -right-3
+             h-6 w-6 rounded-full bg-white border shadow
+             flex items-center justify-center
+             hover:bg-gray-100 transition z-10"
+      (click)="toggleCollapse()"
+    >
+      <svg
+        class="w-4 h-4 transition-transform"
+        [class.rotate-180]="collapsed"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  </div>
+</aside>
+
+<!-- MOBILE SIDEBAR -->
+@if (mobileOpen) {
+  <div class="fixed inset-0 z-50 md:hidden">
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black/40"
+      (click)="closeMobile()"
+    ></div>
+
+    <!-- Drawer -->
+    <aside
+      class="absolute left-0 top-0 h-full w-64 bg-white shadow-xl p-4"
+    >
+      <button
+        class="mb-6 p-2 rounded hover:bg-gray-100"
+        (click)="closeMobile()"
+      >
+        ✕
+      </button>
+
+      <nav class="space-y-3">
+        <a routerLink="/workspaces" (click)="closeMobile()">Workspaces</a>
+        <a routerLink="/collections" (click)="closeMobile()">Collections</a>
+        <a routerLink="/ai" (click)="closeMobile()">AI Assistant</a>
+      </nav>
+    </aside>
+  </div>
+}

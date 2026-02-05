@@ -25,21 +25,21 @@ export class SignupComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  submit() {
+  submit(): void {
     if (this.form.invalid) return;
 
     this.loading = true;
     this.error = '';
 
-    this.auth.signup(this.form.getRawValue()).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.error = err?.error?.message || 'Signup failed';
-        this.loading = false;
-      }
-    });
+    try {
+      // ✅ signal-based signup
+      this.auth.signup(this.form.getRawValue());
+
+      this.router.navigate(['/dashboard']);
+    } catch {
+      this.error = 'Signup failed';
+      this.loading = false;
+    }
   }
 }
 
