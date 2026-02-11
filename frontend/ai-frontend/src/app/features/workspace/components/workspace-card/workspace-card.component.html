@@ -14,9 +14,7 @@
 
     <div class="flex justify-between text-xs text-gray-500">
       <span>{{ workspace.category }}</span>
-      @if (workspace.visibility === 'public') {
-        <span>🌍 Public</span>
-      }
+      <span>{{ workspace.visibility === 'public' ? '🌍 Public' : '🔒 Private' }}</span> 
     </div>
   </div>
 </div>
