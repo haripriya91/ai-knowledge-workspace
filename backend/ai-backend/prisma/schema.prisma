@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -15,6 +8,7 @@ datasource db {
 }
 
 enum Role {
+  OWNER
   ADMIN
   MEMBER
   VIEWER
@@ -23,10 +17,14 @@ enum Role {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
+  password  String
   name      String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  workspaces WorkspaceUser[]
+  workspaceUsers WorkspaceUser[]
+  collections    Collection[]
+  assets         Asset[]
 
   @@map("users")
 }
@@ -35,9 +33,11 @@ model Workspace {
   id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  users       WorkspaceUser[]
-  collections Collection[]
+  workspaceUsers WorkspaceUser[]
+  collections    Collection[]
+  assets         Asset[]
 
   @@map("workspaces")
 }
@@ -47,12 +47,11 @@ model WorkspaceUser {
   role        Role     @default(MEMBER)
   userId      String
   workspaceId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   user        User      @relation(fields: [userId], references: [id])
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-
-  createdAt   DateTime  @default(now()) // Added for tracking
-  updatedAt   DateTime  @updatedAt      // Added for tracking
 
   @@unique([userId, workspaceId])
   @@map("workspace_users")
@@ -61,27 +60,27 @@ model WorkspaceUser {
 model Collection {
   id          String   @id @default(uuid())
   name        String
-  description String?  // Optional field you might add later
-  createdAt   DateTime @default(now())
-
+  userId      String
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  assets Asset[]
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("collections")
 }
 
 model Asset {
-  id           String   @id @default(uuid())
-  title        String
-  type         String
-  content      String?  // Optional field for text content
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt // Added for tracking
+  id          String   @id @default(uuid())
+  name        String
+  userId      String
+  workspaceId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  collectionId String
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("assets")
 }
