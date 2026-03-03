@@ -16,7 +16,7 @@ export class MailService {
 
   // 1️⃣ Initial registration email with activation link
   async sendActivationEmail(email: string, token: string) {
-    const activationLink = `${process.env.FRONTEND_URL}/activate?token=${token}`;
+    const activationLink = `${process.env.FRONTEND_URL}/api/auth/activate?token=${token}`;
 
     const html = `
       <h2>Activate Your Account</h2>
