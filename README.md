@@ -21,20 +21,26 @@
 - 🤖 Use **AI tools** inside each workspace: summaries, Q&A, flashcards, and quizzes
 - 🌍 Browse **public workspaces** without logging in
 - 🔐 Access **private workspaces** securely via JWT authentication
+- 📋 **Project managed with GitHub Projects** — [View AI Workspace Board →](https://github.com/users/haripriya91/projects/2)
 
 ---
 
 ## 📸 Screenshots
 
-> Frontend is 65% complete — screenshots will be added progressively
+> 🚧 Actively in development
 
-| Public Dashboard | Private Workspace | AI Panel |
-|---|---|---|
-| `coming soon` | `coming soon` | `coming soon` |
+### 🌍 Public Overview
+![Public Dashboard](./screenshots/Application-overview.png)
 
-| Login / Signup | File Upload | Workspace Detail |
-|---|---|---|
-| `coming soon` | `coming soon` | `coming soon` |
+### 🔄 How It Works
+![Public Dashboard](./screenshots/How-it-works.png)
+
+### 📊 Public Dashboard
+![Dashboard](./screenshots/Workspace-Dashbord.png)
+
+---
+> 💡 **Live demo coming soon** — AI features (Q&A, summaries, flashcards) in Phase 2
+```
 
 ---
 
@@ -143,6 +149,18 @@ cd backend && npm install && npm run start:dev
 # Frontend
 cd frontend && npm install && ng serve
 ```
+
+---
+
+## 📋 Project Management
+
+This project is managed using **GitHub Projects** with a structured Agile board:
+
+- 🗂️ Epics broken into user stories and tasks
+- 📌 Backlog, In Progress, In Review, Done columns
+- 🔗 Issues linked directly to code commits and PRs
+
+[![GitHub Project Board](https://img.shields.io/badge/GitHub_Projects-View_Board-2088FF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/users/haripriya91/projects/2/views/1)
 
 ---
 
