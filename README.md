@@ -27,19 +27,47 @@
 
 ## 📸 Screenshots
 
-> 🚧 Actively in development
+> 🚧 Actively in development — core screens below
 
-### 🌍 Public Overview
-![Public Dashboard](./screenshots/Application-overview.png)
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="./screenshots/Application-overview.png" alt="Application Overview" width="100%"/>
+      <br/><sub><b>🌍 Public Overview</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="./screenshots/Workspace-Dashbord.png" alt="Workspace Dashboard" width="100%"/>
+      <br/><sub><b>📊 Workspace Dashboard</b></sub>
+    </td>
+  </tr>
+</table>
 
-### 🔄 How It Works
-![Public Dashboard](./screenshots/How-it-works.png)
-
-### 📊 Public Dashboard
-![Dashboard](./screenshots/Workspace-Dashbord.png)
+> 💡 **Live demo coming soon** — AI features (Q&A, summaries, flashcards) in Phase 2
 
 ---
-> 💡 **Live demo coming soon** — AI features (Q&A, summaries, flashcards) in Phase 2
+
+## 🔄 How It Works
+
+1️⃣ **Create a Workspace** — organise your learning by topic or project
+
+2️⃣ **Upload Your Materials** — PDFs, notes, links, images → stored securely in AWS S3
+
+3️⃣ **Backend Processes Content** — NestJS indexes and structures your data in PostgreSQL
+
+4️⃣ **AI Analyses Your Workspace** — context-aware LLM reads your content
+
+5️⃣ **Get AI Insights** — summaries, Q&A, flashcards and quizzes on demand
+
+```mermaid
+flowchart LR
+    A[👤 User] -->|Upload files| B[☁️ AWS S3]
+    A -->|Login / Signup| C[🔐 JWT Auth]
+    B --> D[⚙️ NestJS Backend]
+    C --> D
+    D -->|Store metadata| E[(🗄️ PostgreSQL)]
+    D -->|AI request| F[🤖 LLM / OpenAI]
+    F -->|Summaries · Q&A\nFlashcards · Quizzes| G[💡 Workspace]
+    G --> A
 ```
 
 ---
@@ -190,10 +218,11 @@ This project is managed using **GitHub Projects** with a structured Agile board:
 - [ ] Performance monitoring & optimisation
 
 ---
+
 ## 👩‍💻 Author
 
 **Haripriya Pushpamangalam Kesavan**
-Fullstack Developer · Munich, Germany
+Fullstack Developer · Munich, Germany 🇩🇪
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/haripriya-pk)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/haripriya91)
