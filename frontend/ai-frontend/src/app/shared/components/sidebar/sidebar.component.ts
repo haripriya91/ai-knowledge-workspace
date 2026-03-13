@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
-  collapsed = false;
+  collapsed = true;
   mobileOpen = false;
 
   toggleCollapse() {
