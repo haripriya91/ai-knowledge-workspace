@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-ai-feature-card',
@@ -8,7 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AiFeatureCardComponent {
 
-  title: string = 'AI Feature Card';
-  description: string = 'This is a card component to display AI features.';
-  icon: string = 'assets/ai-icon.png';
+  @Input() icon!: string;
+  @Input() title!: string;
+  @Input() description!: string;
+
 }

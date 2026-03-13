@@ -1,8 +1,17 @@
 <div
-  class="border rounded-xl p-4 hover:shadow cursor-pointer transition"
+  class="flex flex-col items-center justify-center
+         border rounded-lg p-3
+         hover:bg-gray-50 hover:shadow
+         transition cursor-pointer"
   title="{{ description }}"
 >
-  <div class="text-2xl">{{ icon }}</div>
-  <p class="mt-2 font-medium text-sm">{{ title }}</p>
-  <p class="text-xs text-gray-500">{{ description }}</p>
+
+  <div class="text-xl">
+    {{ icon }}
+  </div>
+
+  <p class="text-xs mt-1 font-medium">
+    {{ title }}
+  </p>
+
 </div>

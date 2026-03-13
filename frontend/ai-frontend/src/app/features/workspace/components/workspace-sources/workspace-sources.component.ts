@@ -7,5 +7,9 @@ import { SourceCardsComponent } from '../source-cards/source-cards.component';
   styleUrl: './workspace-sources.component.css'
 })
 export class WorkspaceSourcesComponent {
+  sourcesOpen = true;
 
+  toggleSources() {
+    this.sourcesOpen = !this.sourcesOpen;
+  }
 }

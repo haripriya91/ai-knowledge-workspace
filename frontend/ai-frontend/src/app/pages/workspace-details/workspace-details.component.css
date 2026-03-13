@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page-container {
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+.scrollable-area {
+  overflow-y: auto;
+  height: 100%;
+}
