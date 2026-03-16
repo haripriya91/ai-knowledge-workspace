@@ -5,7 +5,7 @@ import { WorkspaceAiFeaturesComponent } from '../../features/workspace/component
 
 @Component({
   selector: 'app-workspace-details',
-  imports: [WorkspaceHeaderComponent, WorkspaceSourcesComponent,WorkspaceAiFeaturesComponent],
+  imports: [ WorkspaceSourcesComponent,WorkspaceAiFeaturesComponent],
   templateUrl: './workspace-details.component.html',
   styleUrl: './workspace-details.component.css'
 })

@@ -26,20 +26,25 @@ export class SignupComponent {
   });
 
   submit(): void {
-    if (this.form.invalid) return;
 
+    if (this.form.invalid) return;
+  
     this.loading = true;
     this.error = '';
-
-    try {
-      // ✅ signal-based signup
-      this.auth.signup(this.form.getRawValue());
-
-      this.router.navigate(['/dashboard']);
-    } catch {
-      this.error = 'Signup failed';
-      this.loading = false;
-    }
+  
+    this.auth.signup(this.form.getRawValue())
+      .subscribe({
+  
+        next: () => {
+          this.router.navigate(['/auth/login']);
+        },
+  
+        error: () => {
+          this.error = 'Signup failed';
+          this.loading = false;
+        }
+  
+      });
   }
 }
 

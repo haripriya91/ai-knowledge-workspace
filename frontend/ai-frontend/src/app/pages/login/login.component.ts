@@ -26,22 +26,25 @@ export class LoginComponent {
 
   submit(): void {
     if (this.form.invalid) return;
-
+  
     this.loading = true;
     this.error = null;
-
+  
     const { email, password } = this.form.getRawValue();
-    try {
-      // ✅ signal-based login (sync)
-      this.auth.login(email, password);
-
-      const returnUrl =
-        this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
-
-      this.router.navigateByUrl(returnUrl);
-    } catch {
-      this.error = 'Invalid email or password';
-      this.loading = false;
-    }
+  
+    this.auth.login(email, password).subscribe({
+      next: () => {
+  
+        const returnUrl =
+          this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
+  
+        this.router.navigateByUrl(returnUrl);
+      },
+  
+      error: () => {
+        this.error = 'Invalid email or password';
+        this.loading = false;
+      }
+    });
   }
 }
