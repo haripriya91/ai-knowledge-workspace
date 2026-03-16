@@ -23,7 +23,7 @@
       (click)="profileOpen = !profileOpen">
       <img src="assets/undraw_profile-pic_fatv.svg" class="h-8 w-8 rounded-full object-cover" alt="Profile" />
       <span class="text-sm font-medium text-gray-700 hidden lg:block">
-        Haripriya
+        {{ user()?.name || 'User' }}
       </span>
     </button>
 
@@ -39,10 +39,10 @@
           />
           <div>
             <p class="text-sm font-semibold text-gray-800">
-              Haripriya PK
+              {{ user()?.name || 'User' }}
             </p>
             <p class="text-xs text-gray-500">
-              haripriya&#64;email.com
+              {{ user()?.email }}
             </p>
           </div>
         </div>

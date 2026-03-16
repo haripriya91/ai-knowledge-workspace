@@ -202,5 +202,6 @@ Password
  PDFs   | Viewer  | Ask AI
  Links  |         | Summarize
  Notes  |         | Flashcards
+ videos |         | quizes etc
 --------------------------------------
 

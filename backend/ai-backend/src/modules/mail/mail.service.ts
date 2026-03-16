@@ -39,7 +39,7 @@ export class MailService {
 
   // 3️⃣ Forgot password
   async sendForgotPassword(email: string, token: string) {
-    const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const link = `${process.env.FRONTEND_URL}/api/auth/reset-password?token=${token}`;
 
     const html = `
       <h2>Password Reset</h2>
