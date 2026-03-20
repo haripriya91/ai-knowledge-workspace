@@ -174,7 +174,22 @@ export class AuthService {
     const payload = { sub: userId };
 
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
+  }
+
+  // =========================
+  // PROFILE
+  // =========================
+
+  async getProfile(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+      },
+    });
   }
 }
