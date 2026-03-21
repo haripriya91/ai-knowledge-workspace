@@ -37,7 +37,7 @@ model Workspace {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  isPublic  Boolean  @default(false)
   workspaceUsers WorkspaceUser[]
   collections    Collection[]
   assets         Asset[]
