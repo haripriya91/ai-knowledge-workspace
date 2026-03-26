@@ -1,4 +1,19 @@
 import { Controller } from '@nestjs/common';
+import { Body, Post, UseGuards } from '@nestjs/common';
+import { GetUser } from '../auth/get-user.decorator';
+import { JwtAuthGuard } from '../auth/jwt.guard';
+import * as jwtPayloadInterface from '../auth/interfaces/jwt-payload.interface';
+import { AssetService } from './asset.service';
 
 @Controller('asset')
-export class AssetController {}
+export class AssetController {
+  constructor(private readonly assetService: AssetService) {}
+  @Post('assets')
+  @UseGuards(JwtAuthGuard)
+  createAsset(
+    @GetUser() user: jwtPayloadInterface.JwtPayload,
+    @Body() dto: { name: string; workspaceId: string },
+  ) {
+    return this.assetService.createAsset(user.userId, dto);
+  }
+}
