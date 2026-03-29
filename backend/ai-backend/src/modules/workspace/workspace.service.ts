@@ -1,34 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 
 @Injectable()
 export class WorkspaceService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(userId: string, name: string) {
+  async create(userId: string, dto: CreateWorkspaceDto) {
     const workspace = await this.prisma.workspace.create({
       data: {
-        name,
-        isPublic: false,
-        workspaceUsers: {
-          create: {
-            userId,
-            role: 'OWNER',
-          },
-        },
+        name: dto.name || 'Untitled Workspace',
+        description: dto.description,
+        category: dto.category,
+        thumbnail: dto.thumbnail,
+        isPublic: dto.isPublic ?? false,
+
+        workspaceUsers: dto.isPublic
+          ? undefined // ❗ public → no owner needed
+          : {
+              create: {
+                userId,
+                role: 'OWNER',
+              },
+            },
       },
     });
 
     return workspace;
   }
 
+  async createPublic(dto: CreateWorkspaceDto) {
+    return this.prisma.workspace.create({
+      data: {
+        name: dto.name || 'Untitled',
+        description: dto.description,
+        category: dto.category,
+        thumbnail: dto.thumbnail,
+        isPublic: true,
+      },
+    });
+  }
+
   async getUserWorkspaces(userId: string) {
     return this.prisma.workspace.findMany({
       where: {
         workspaceUsers: {
-          some: {
-            userId,
-          },
+          some: { userId },
         },
+      },
+      include: {
+        assets: true,
       },
     });
   }
@@ -41,5 +61,30 @@ export class WorkspaceService {
         role: 'MEMBER',
       },
     });
+  }
+
+  async getWorkspaceDetails(userId: string, id: string) {
+    const workspace = await this.prisma.workspace.findFirst({
+      where: {
+        id,
+        OR: [
+          { isPublic: true },
+          {
+            workspaceUsers: {
+              some: { userId },
+            },
+          },
+        ],
+      },
+      include: {
+        assets: true,
+      },
+    });
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found or no access');
+    }
+
+    return workspace;
   }
 }

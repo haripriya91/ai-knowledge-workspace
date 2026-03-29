@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { WorkspaceListComponent } from '../../../workspace/components/workspace-list/workspace-list.component';
 import { ViewToggleComponent } from '../../../../shared/components/view-toggle/view-toggle.component';
 import { PUBLIC_WORKSPACES } from '../../public-workspaces.mock';
@@ -11,7 +11,7 @@ import { Workspace } from '../../../../shared/models/workspace.model';
   styleUrl: './public-workspace-section.component.css'
 })
 export class PublicWorkspaceSectionComponent {
-  workspaces: Workspace[] = PUBLIC_WORKSPACES;
+  @Input() workspaces: Workspace[] = [];
 
   categories: string[] = ['All', 'Environment', 'Fashion', 'Travel', 'Programming', 'AI', 'Hobby'];
   selectedCategory = 'All';

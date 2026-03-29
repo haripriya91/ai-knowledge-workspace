@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { WorkspaceListComponent } from '../../../workspace/components/workspace-list/workspace-list.component';
 import { ViewToggleComponent } from '../../../../shared/components/view-toggle/view-toggle.component';
 import { PRIVATE_WORKSPACES } from '../../private-workspaces.mock';
@@ -13,7 +13,7 @@ import { Workspace } from '../../../../shared/models/workspace.model';
 })
 export class PrivateWorkspaceSectionComponent implements OnInit {
 
-  workspaces: Workspace[] = PRIVATE_WORKSPACES;
+  @Input() workspaces: Workspace[] = [];
 
   view: 'grid' | 'list' = 'grid';
   isMobile = false;

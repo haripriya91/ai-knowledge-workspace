@@ -12,7 +12,7 @@
     <button
       class="flex items-center gap-2 px-4 py-2
              rounded-lg bg-black text-white
-             self-start md:self-auto"
+             self-start md:self-auto" (click)="createWorkspace()"
     >
       + Create workspace
     </button>
@@ -49,11 +49,11 @@
 <section class="px-4 md:px-6 max-w-7xl mx-auto mt-6">
 
   @if (activeTab === 'private') {
-    <app-private-workspace-section />
+    <app-private-workspace-section  [workspaces]="workspaces"/>
   }
 
   @if (activeTab === 'public') {
-    <app-public-workspace-section />
+    <app-public-workspace-section  [workspaces]="workspaces"/>
   }
 
 </section>
