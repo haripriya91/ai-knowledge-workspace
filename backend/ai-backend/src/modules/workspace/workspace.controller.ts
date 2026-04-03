@@ -24,6 +24,11 @@ export class WorkspaceController {
     return this.workspaceService.createPublic(dto);
   }
 
+  @Get('publicWorkspaces')
+  getPublicWorkspaces() {
+    return this.workspaceService.getPublicWorkspaces();
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard)
   getMyWorkspaces(@GetUser() user: JwtPayload) {

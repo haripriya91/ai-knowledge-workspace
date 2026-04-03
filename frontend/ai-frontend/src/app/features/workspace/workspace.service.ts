@@ -11,11 +11,15 @@ export class WorkspaceService {
   constructor(private http: HttpClient) {}
 
   create(name: string) {
-    return this.http.post<any>('http://localhost:3000/api/auth/createWorkspace', { name });
+    return this.http.post<any>('http://localhost:3000/api/workspaces', { name });
   }
 
-  getWorkspace(id: string) {
-    return this.http.get<any>(`${this.baseUrl}/${id}`);
+  getWorkspace() {
+    return this.http.get<any>(`${this.baseUrl}`);
+  }
+
+  getPublicWorkspace() {
+    return this.http.get<any>('http://localhost:3000/api/workspaces/publicWorkspaces');
   }
 
   update(id: string, name: string) {
