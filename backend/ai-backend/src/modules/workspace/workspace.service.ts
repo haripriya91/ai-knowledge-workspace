@@ -53,6 +53,17 @@ export class WorkspaceService {
     });
   }
 
+  async getPublicWorkspaces() {
+    return this.prisma.workspace.findMany({
+      where: {
+        isPublic: true,
+      },
+      include: {
+        assets: true,
+      },
+    });
+  }
+
   async joinWorkspace(userId: string, workspaceId: string) {
     return this.prisma.workspaceUser.create({
       data: {

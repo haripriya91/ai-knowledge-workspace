@@ -18,22 +18,21 @@ export class DashboardComponent {
   private auth = inject(AuthService);
   private workspaceService = inject(WorkspaceService);
   router = inject(Router);
-  
+
   user = this.auth.user;
-  workspaces: Workspace[] = [];
+  privateWorkspaces: Workspace[] = [];
+  publicWorkspaces: Workspace[] = [];
 
 
   ngOnInit() {
+    this.workspaceService.getPublicWorkspace().subscribe(data => {
+      this.publicWorkspaces = data;
+    });
     if (this.auth.isLoggedIn()) {
       this.auth.getProfile().subscribe();
-      const id = this.user()?.name;
-      if (id) {
-        this.workspaceService.getWorkspace(id).subscribe(data => {
-          this.workspaces = data;
-        });
-      } else {
-        console.error('Workspace ID is undefined');
-      }
+      this.workspaceService.getWorkspace().subscribe(data => {
+        this.privateWorkspaces = data;
+      });
     }
   }
 

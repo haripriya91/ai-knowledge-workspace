@@ -49,11 +49,11 @@
 <section class="px-4 md:px-6 max-w-7xl mx-auto mt-6">
 
   @if (activeTab === 'private') {
-    <app-private-workspace-section  [workspaces]="workspaces"/>
+    <app-private-workspace-section  [workspaces]="privateWorkspaces"/>
   }
 
   @if (activeTab === 'public') {
-    <app-public-workspace-section  [workspaces]="workspaces"/>
+    <app-public-workspace-section  [workspaces]="publicWorkspaces"/>
   }
 
 </section>
