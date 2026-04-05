@@ -1,20 +1,32 @@
-<div
-  class="flex items-center gap-3
-         border rounded-lg p-3
-         hover:bg-gray-50 hover:shadow
-         transition cursor-pointer"
->
+@if (!asset) {
+  <div class="text-center text-gray-500 py-4">
+    Invalid asset
+  </div>
+} @else {
 
-  <span class="text-lg">📄</span>
+  <div
+    class="flex items-center gap-3
+           border rounded-lg p-3
+           hover:bg-gray-50 hover:shadow
+           transition cursor-pointer"
+  >
 
-  <div class="flex-1">
-    <p class="text-sm font-medium truncate">
-      {{ title }}
-    </p>
+    <span class="text-lg">📄</span>
 
-    <p class="text-xs text-gray-500 uppercase">
-      {{ type }}
-    </p>
+    <div class="flex-1">
+      <p class="text-sm font-medium truncate">
+        {{ asset.name }}
+      </p>
+
+      <p class="text-xs text-gray-500 uppercase">
+        {{ asset.type }}
+      </p>
+
+      <p class="text-xs text-gray-500">
+        {{ asset.url }}
+      </p>
+    </div>
+
   </div>
 
-</div>
+}

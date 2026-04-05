@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Asset } from '../../../../shared/models/source.model'; 
 
 @Component({
   selector: 'app-source-cards',
@@ -9,7 +10,6 @@ import { Component, Input } from '@angular/core';
 export class SourceCardsComponent {
 
 
-  @Input() type!: string;
-  @Input() title!: string;  
-  
+  @Input() asset!: Asset;
+
 }

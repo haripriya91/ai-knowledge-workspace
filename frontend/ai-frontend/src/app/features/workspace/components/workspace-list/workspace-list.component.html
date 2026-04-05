@@ -12,7 +12,7 @@
     [class.space-y-4]="view === 'list'"
     >
       @for (ws of workspaces; track ws.id) {
-        <app-workspace-card [workspace]="ws" [view]="view" />
+        <app-workspace-card [workspace]="ws" [view]="view" (click)="openWorkspace(ws)"/>
       }
     </div>
   }

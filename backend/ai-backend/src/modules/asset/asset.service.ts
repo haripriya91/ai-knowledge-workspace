@@ -54,4 +54,22 @@ export class AssetService {
       },
     });
   }
+
+  async getMyAssets(userId: string, workspaceId: string) {
+    return this.prisma.asset.findMany({
+      where: {
+        userId: userId,
+        workspaceId: workspaceId,
+      },
+    });
+  }
+
+  async getPublicAssets(workspaceId: string) {
+    return this.prisma.asset.findMany({
+      where: {
+        isPublic: true,
+        workspaceId: workspaceId,
+      },
+    });
+  }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 
@@ -12,7 +16,7 @@ export class WorkspaceService {
         description: dto.description,
         category: dto.category,
         thumbnail: dto.thumbnail,
-        isPublic: dto.isPublic ?? false,
+        isPublic: false,
 
         workspaceUsers: dto.isPublic
           ? undefined // ❗ public → no owner needed
@@ -74,26 +78,32 @@ export class WorkspaceService {
     });
   }
 
-  async getWorkspaceDetails(userId: string, id: string) {
-    const workspace = await this.prisma.workspace.findFirst({
-      where: {
-        id,
-        OR: [
-          { isPublic: true },
-          {
-            workspaceUsers: {
-              some: { userId },
-            },
-          },
-        ],
-      },
+  async getWorkspaceDetails(id: string, userId?: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id },
       include: {
         assets: true,
+        workspaceUsers: userId
+          ? {
+              where: { userId },
+              select: { userId: true },
+            }
+          : false,
       },
     });
 
     if (!workspace) {
-      throw new NotFoundException('Workspace not found or no access');
+      throw new NotFoundException('Workspace not found');
+    }
+
+    if (workspace.isPublic) {
+      return workspace;
+    }
+
+    const hasAccess = workspace.workspaceUsers?.length > 0;
+
+    if (!userId || !hasAccess) {
+      throw new UnauthorizedException('Access denied');
     }
 
     return workspace;

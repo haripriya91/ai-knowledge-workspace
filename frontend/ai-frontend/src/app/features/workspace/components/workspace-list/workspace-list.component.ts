@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Workspace } from '../../../../shared/models/workspace.model';
 import { WorkspaceCardComponent } from '../workspace-card/workspace-card.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-workspace-list',
@@ -11,4 +12,9 @@ import { WorkspaceCardComponent } from '../workspace-card/workspace-card.compone
 export class WorkspaceListComponent {
    @Input() workspaces: Workspace[] = [];
   @Input() view: 'grid' | 'list' = 'grid';
+  constructor(private router: Router) {}
+
+  openWorkspace(ws: any) {
+    this.router.navigate(['/workspace', ws.id]);
+  }
 }

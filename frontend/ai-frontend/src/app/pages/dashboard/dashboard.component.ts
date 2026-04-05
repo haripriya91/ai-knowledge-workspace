@@ -30,7 +30,7 @@ export class DashboardComponent {
     });
     if (this.auth.isLoggedIn()) {
       this.auth.getProfile().subscribe();
-      this.workspaceService.getWorkspace().subscribe(data => {
+      this.workspaceService.getMyWorkspaces().subscribe(data => {
         this.privateWorkspaces = data;
       });
     }

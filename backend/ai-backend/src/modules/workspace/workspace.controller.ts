@@ -42,8 +42,10 @@ export class WorkspaceController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  getWorkspace(@GetUser() user: JwtPayload, @Param('id') id: string) {
-    return this.workspaceService.getWorkspaceDetails(user.userId, id);
+  getWorkspace(
+    @Param('id') id: string,
+    @GetUser() user?: JwtPayload, // optional
+  ) {
+    return this.workspaceService.getWorkspaceDetails(id, user?.userId);
   }
 }

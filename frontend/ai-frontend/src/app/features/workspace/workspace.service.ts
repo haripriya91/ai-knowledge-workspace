@@ -14,12 +14,15 @@ export class WorkspaceService {
     return this.http.post<any>('http://localhost:3000/api/workspaces', { name });
   }
 
-  getWorkspace() {
-    return this.http.get<any>(`${this.baseUrl}`);
+  getWorkspaceDetails(workspaceId: string) {
+    return this.http.get<any>(`http://localhost:3000/api/workspaces/${workspaceId}`);
   }
-
   getPublicWorkspace() {
     return this.http.get<any>('http://localhost:3000/api/workspaces/publicWorkspaces');
+  }
+
+  getMyWorkspaces() {
+    return this.http.get<any>(`${this.baseUrl}`);
   }
 
   update(id: string, name: string) {
