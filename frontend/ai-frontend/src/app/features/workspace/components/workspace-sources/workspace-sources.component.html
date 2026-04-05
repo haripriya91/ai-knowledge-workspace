@@ -21,30 +21,32 @@
     class="w-full py-2
            bg-blue-600 text-white
            rounded-full text-sm
-           hover:bg-blue-700 transition">
+           hover:bg-blue-700 transition" (click)="addWorkspaceSource()">
     + Add Source
   </button>
 
+  @if (loading) {
+    <div>Loading...</div>
+  }
+  
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
 
   <!-- SOURCE LIST -->
   @if (sourcesOpen) {
 
-    <div class="space-y-3">
-
-      <app-source-cards
-        type="pdf"
-        title="Angular Signals Guide"
-      />
-    </div>
-      
-    <div class="space-y-3">
-      <app-source-cards
-        type="url"
-        title="Blog: AI Knowledge Systems"
-      />
-
-    </div>
-
-  }
-
+      @if (assets.length === 0) {
+        <div class="text-gray-500 text-sm">No assets found</div>
+      }
+  
+      @for (asset of assets; track asset._id) {
+        <app-source-cards
+          [asset]="asset"
+          ><!--(delete)="deleteAsset(asset._id)" -->
+        </app-source-cards>
+      }
+  
+    }  
+  
 </div>

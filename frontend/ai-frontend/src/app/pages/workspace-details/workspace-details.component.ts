@@ -14,16 +14,46 @@ export class WorkspaceDetailsComponent {
   private workspaceService = inject(WorkspaceService);
   router = inject(Router);
   route = inject(ActivatedRoute);
-   id = this.route.snapshot.paramMap.get('id');
+  workspace: any;
+   workspaceId!: string;
+   workspaceName = '';
+   loading = false;
+   error = '';
+   
+  ngOnInit() {
 
+    this.workspaceId = this.route.snapshot.paramMap.get('id')!;
+
+    this.loadWorkspace();
+  }
+
+  loadWorkspace() {
+    this.loading = true;
+
+    this.workspaceService.getWorkspaceDetails(this.workspaceId).subscribe({
+      next: (data) => {
+        this.workspace = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load workspace';
+        this.loading = false;
+
+        if (err.status === 401) {
+          this.router.navigate(['/dashboard']);
+        }
+      }
+    });
+  }
+  
   onNameChange(newName: string) {
-    if (this.id)
-      this.workspaceService.update(this.id, newName).subscribe();
+    if (this.workspaceId)
+      this.workspaceService.update(this.workspaceId, newName).subscribe();
   }
 
   deleteWorkspace() {
-    if (this.id) {
-      this.workspaceService.delete(this.id).subscribe(() => {
+    if (this.workspaceId) {
+      this.workspaceService.delete(this.workspaceId).subscribe(() => {
         this.router.navigate(['/dashboard']);
       });
     }
