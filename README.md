@@ -8,7 +8,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS_S3-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
+![Claude](https://img.shields.io/badge/Claude_Haiku-D97757?style=for-the-badge&logo=anthropic&logoColor=white)
 
 ---
 
@@ -18,7 +18,7 @@
 
 - 📂 Create and manage personal **knowledge workspaces**
 - 📄 Upload files (PDFs, images, links, notes) — stored securely in **AWS S3**
-- 🤖 Use **AI tools** inside each workspace: summaries, Q&A, flashcards, and quizzes
+- 🤖 Use **AI tools** inside each workspace: summaries, Q&A, flashcards, and quizzes powered by **Claude Haiku**
 - 🌍 Browse **public workspaces** without logging in
 - 🔐 Access **private workspaces** securely via JWT authentication
 - 📋 **Project managed with GitHub Projects** — [View AI Workspace Board →](https://github.com/users/haripriya91/projects/2)
@@ -54,7 +54,7 @@
 
 3️⃣ **Backend Processes Content** — NestJS indexes and structures your data in PostgreSQL
 
-4️⃣ **AI Analyses Your Workspace** — context-aware LLM reads your content
+4️⃣ **AI Analyses Your Workspace** — Claude Haiku reads your content with workspace-aware context
 
 5️⃣ **Get AI Insights** — summaries, Q&A, flashcards and quizzes on demand
 
@@ -65,7 +65,7 @@ flowchart LR
     B --> D[⚙️ NestJS Backend]
     C --> D
     D -->|Store metadata| E[(🗄️ PostgreSQL)]
-    D -->|AI request| F[🤖 LLM / OpenAI]
+    D -->|AI request| F[🤖 Claude Haiku\nAnthropic API]
     F -->|Summaries · Q&A\nFlashcards · Quizzes| G[💡 Workspace]
     G --> A
 ```
@@ -99,8 +99,9 @@ flowchart LR
 └────────────┘  └──────────────┘  └───────────────┘
                                           │
                               ┌───────────▼──────────┐
-                              │    LLM Provider      │
-                              │  OpenAI API / Other  │
+                              │    Anthropic API      │
+                              │  Claude Haiku Model  │
+                              │ (claude-haiku-4-5)   │
                               └──────────────────────┘
 ```
 
@@ -142,7 +143,8 @@ flowchart LR
 ### AI Layer *(Phase 2)*
 | Technology | Purpose |
 |---|---|
-| OpenAI API / LLM provider | AI content generation |
+| Anthropic API | AI provider — Claude Haiku model |
+| Claude Haiku (`claude-haiku-4-5`) | Fast, cost-efficient LLM for content generation |
 | Prompt templates | Structured, consistent AI interactions |
 | Workspace context | Personalised AI responses per user |
 
@@ -178,6 +180,8 @@ cd backend && npm install && npm run start:dev
 cd frontend && npm install && ng serve
 ```
 
+> ⚙️ **Environment variables:** Set `ANTHROPIC_API_KEY` in your `.env` file to enable AI features.
+
 ---
 
 ## 📋 Project Management
@@ -205,7 +209,7 @@ This project is managed using **GitHub Projects** with a structured Agile board:
 - [ ] GitHub Actions CI/CD pipeline
 
 ### Phase 2 — AI Features
-- [ ] OpenAI API integration
+- [ ] Anthropic Claude Haiku API integration
 - [ ] Document summarisation
 - [ ] AI-powered Q&A on uploaded content
 - [ ] Flashcard & quiz generation
