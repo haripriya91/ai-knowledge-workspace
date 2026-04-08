@@ -1,17 +1,26 @@
 
+<div class="md:hidden flex border-b text-sm">
 
+  <button class="flex-1 py-2" (click)="activeTab = 'sources'">Sources</button>
+  <button class="flex-1 py-2" (click)="activeTab = 'chat'">Chat</button>
+  <button class="flex-1 py-2" (click)="activeTab = 'ai'">AI</button>
+
+</div>
 <!-- Main container - height calculated as viewport minus header height -->
-<div class="h-[calc(100vh-64px)] grid grid-cols-12 gap-6 overflow-hidden">
-  <!-- SOURCES -->
+<div class="h-[calc(100vh-64px)] flex flex-col md:grid md:grid-cols-12 gap-4 md:gap-6">
+    <!-- SOURCES -->
   @if (workspace) {
-  <aside class="col-span-3 h-full overflow-hidden">
+  <aside class="col-span-12 md:col-span-3 h-full overflow-hidden"
+  [class.hidden]="activeTab !== 'sources' && isMobile" >
     <app-workspace-sources [workspaceId]="workspaceId"
     [isPublicWorkspace]="workspace.isPublic"/>
   </aside>
 }
   <!-- MAIN WORKSPACE -->
-  <main class="col-span-8 flex flex-col h-full overflow-hidden">
-    <!-- CHAT WORKSPACE -->
+  <main
+  class="col-span-12 md:col-span-8 flex flex-col h-full min-h-0"
+  [class.hidden]="activeTab !== 'chat' && isMobile">
+      <!-- CHAT WORKSPACE -->
     <div class="flex flex-col flex-1 bg-gray-50 rounded-xl h-full overflow-hidden">
   
       <!-- CHAT HISTORY - THIS IS THE ONLY SCROLLABLE AREA -->
@@ -63,7 +72,8 @@
   </main>
 
   <!-- AI TOOLS -->
-  <aside class="col-span-1 h-full overflow-hidden">
+  <aside class="col-span-12 md:col-span-1"
+  [class.hidden]="activeTab !== 'ai' && isMobile">
     <app-workspace-ai-features />
   </aside>
 </div>

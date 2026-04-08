@@ -19,6 +19,7 @@ export class WorkspaceDetailsComponent {
    workspaceName = '';
    loading = false;
    error = '';
+   activeTab: 'sources' | 'chat' | 'ai' = 'chat';
    
   ngOnInit() {
 
@@ -57,5 +58,9 @@ export class WorkspaceDetailsComponent {
         this.router.navigate(['/dashboard']);
       });
     }
+  }
+
+  get isMobile() {
+    return window.innerWidth < 768;
   }
 }

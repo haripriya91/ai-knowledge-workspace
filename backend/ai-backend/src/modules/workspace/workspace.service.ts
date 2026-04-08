@@ -91,7 +91,6 @@ export class WorkspaceService {
           : false,
       },
     });
-
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -105,6 +104,7 @@ export class WorkspaceService {
     if (!userId || !hasAccess) {
       throw new UnauthorizedException('Access denied');
     }
+    console.log('workspace:', workspace);
 
     return workspace;
   }

@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { GetUser } from '../auth/get-user.decorator';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
+import { OptionalJwtAuthGuard } from '../auth/interfaces/optional-jwt.guard';
 
 @Controller('workspaces')
 export class WorkspaceController {
@@ -41,11 +42,13 @@ export class WorkspaceController {
     return this.workspaceService.joinWorkspace(user.userId, workspaceId);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')
   getWorkspace(
     @Param('id') id: string,
     @GetUser() user?: JwtPayload, // optional
   ) {
+    console.log('userId:', user?.userId);
     return this.workspaceService.getWorkspaceDetails(id, user?.userId);
   }
 }
