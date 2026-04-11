@@ -25,6 +25,13 @@
     + Add Source
   </button>
 
+@if (showUploadModal) {
+  <app-upload-source
+    (close)="closeUpload()"
+    (upload)="uploadFile($event)">
+  </app-upload-source>
+}
+
   @if (loading) {
     <div>Loading...</div>
   }

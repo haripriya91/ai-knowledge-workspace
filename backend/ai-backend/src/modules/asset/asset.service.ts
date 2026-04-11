@@ -9,7 +9,11 @@ import { CreateAssetDto } from './dto/create-asset.dto';
 @Injectable()
 export class AssetService {
   constructor(private readonly prisma: PrismaService) {}
-  async createAsset(userId: string, dto: CreateAssetDto) {
+  async createAsset(
+    userId: string,
+    dto: CreateAssetDto,
+    file?: Express.Multer.File,
+  ) {
     const workspace = await this.prisma.workspace.findUnique({
       where: { id: dto.workspaceId },
     });
@@ -18,19 +22,42 @@ export class AssetService {
       throw new NotFoundException('Workspace not found');
     }
 
-    if (workspace.isPublic && !dto.isPublic) {
-      throw new ForbiddenException('Cannot modify public workspace');
+    // ✅ Correct access check
+    const hasAccess = await this.prisma.workspaceUser.findFirst({
+      where: {
+        workspaceId: dto.workspaceId,
+        userId: userId,
+      },
+    });
+
+    if (!workspace.isPublic && !hasAccess) {
+      throw new ForbiddenException('No access to workspace');
+    }
+
+    let fileName: string | null = null;
+    let mimeType = '';
+    let filePath: string | null = null;
+    let type: 'pdf' | 'docx' | 'url' = 'url';
+
+    if (file && typeof file === 'object') {
+      const { originalname, mimetype, filename } = file;
+
+      fileName = originalname ?? null;
+      mimeType = mimetype ?? '';
+      filePath = filename ?? null;
+
+      type = mimeType.includes('pdf') ? 'pdf' : 'docx';
     }
 
     return this.prisma.asset.create({
       data: {
-        name: dto.name,
-        type: dto.type,
-        url: dto.type === 'url' ? dto.url : null,
-        filePath: dto.type === 'pdf' ? dto.filePath : null,
+        name: dto.name || fileName || 'Untitled',
+        type,
+        url: dto.url || null,
+        filePath,
         userId,
         workspaceId: dto.workspaceId,
-        isPublic: dto.isPublic ?? false,
+        isPublic: workspace.isPublic,
       },
     });
   }
