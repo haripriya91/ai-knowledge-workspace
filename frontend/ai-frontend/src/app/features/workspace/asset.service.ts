@@ -10,8 +10,11 @@ export class AssetService {
 
   constructor(private http: HttpClient) {}
 
-  create(name: string) {
-    return this.http.post<any>('http://localhost:3000/api/assets/addAssets', { name });
+  createAsset(formData: FormData) {
+    return this.http.post<any>(
+      'http://localhost:3000/api/assets',
+      formData
+    );
   }
 
   getMyAssets(workspaceId: string) {

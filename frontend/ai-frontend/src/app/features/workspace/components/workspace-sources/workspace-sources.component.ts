@@ -2,10 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SourceCardsComponent } from '../source-cards/source-cards.component';
 import { AssetService } from '../../asset.service';
 import { ActivatedRoute } from '@angular/router';
+import { UploadSourceComponent } from '../upload-source/upload-source.component';
 
 @Component({
   selector: 'app-workspace-sources',
-  imports: [SourceCardsComponent],
+  imports: [SourceCardsComponent,UploadSourceComponent],
   templateUrl: './workspace-sources.component.html',
   styleUrl: './workspace-sources.component.css'
 })
@@ -17,6 +18,8 @@ export class WorkspaceSourcesComponent {
 
   loading = false;
   error = '';
+
+  showUploadModal = false;
 
   constructor(
     private assetService: AssetService,
@@ -64,13 +67,7 @@ export class WorkspaceSourcesComponent {
   }
 
   addWorkspaceSource() {
-    const name = prompt('Enter asset name');
-    if (!name) return;
-
-    this.assetService.create(name).subscribe({
-      next: () => this.loadAssets(),
-      error: () => this.error = 'Failed to create asset'
-    });
+    this.showUploadModal = true;
   }
 
 
@@ -84,4 +81,43 @@ export class WorkspaceSourcesComponent {
       error: () => this.error = 'Failed to delete asset'
     });
   }
+
+
+openUpload() {
+  this.showUploadModal = true;
+}
+
+closeUpload() {
+  this.showUploadModal = false;
+}
+
+uploadFile(data: { file?: File; url?: string; name?: string }) {
+
+  const formData = new FormData();
+
+  formData.append('workspaceId', this.workspaceId);
+
+  formData.append('name', data.name?.trim() || 'Untitled');
+
+  if (data.url) {
+    formData.append('url', data.url);
+    formData.append('type', 'url');
+  }
+
+  if (data.file) {
+    formData.append('file', data.file);
+    formData.append('type', 'pdf'); // or detect dynamically
+  }
+
+  this.assetService.createAsset(formData).subscribe({
+    next: () => {
+      this.loadAssets();
+      this.closeUpload();
+    },
+    error: (err) => {
+      console.log(err);
+      this.error = 'Failed to add source';
+    }
+  });
+}
 }
