@@ -13,7 +13,7 @@
   <aside class="col-span-12 md:col-span-3 h-full overflow-hidden"
   [class.hidden]="activeTab !== 'sources' && isMobile" >
     <app-workspace-sources [workspaceId]="workspaceId"
-    [isPublicWorkspace]="workspace.isPublic"/>
+    [isPublicWorkspace]="workspace.isPublic"  (assetSelected)="onAssetSelected($event)"/>
   </aside>
 }
   <!-- MAIN WORKSPACE -->
@@ -74,6 +74,6 @@
   <!-- AI TOOLS -->
   <aside class="col-span-12 md:col-span-1"
   [class.hidden]="activeTab !== 'ai' && isMobile">
-    <app-workspace-ai-features />
+    <app-workspace-ai-features [workspaceId]="workspaceId" [selectedAsset]="selectedAsset"/>
   </aside>
 </div>

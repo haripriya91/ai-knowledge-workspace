@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SourceCardsComponent } from '../source-cards/source-cards.component';
 import { AssetService } from '../../asset.service';
 import { ActivatedRoute } from '@angular/router';
 import { UploadSourceComponent } from '../upload-source/upload-source.component';
+import { Asset } from '../../../../shared/models/source.model';
 
 @Component({
   selector: 'app-workspace-sources',
@@ -15,6 +16,7 @@ export class WorkspaceSourcesComponent {
   assets: any[] = [];
   @Input() workspaceId!: string;
   @Input() isPublicWorkspace!: boolean;
+  @Output() assetSelected = new EventEmitter<Asset>(); 
 
   loading = false;
   error = '';
@@ -119,5 +121,9 @@ uploadFile(data: { file?: File; url?: string; name?: string }) {
       this.error = 'Failed to add source';
     }
   });
+}
+
+selectAsset(asset: Asset) {          
+  this.assetSelected.emit(asset);
 }
 }

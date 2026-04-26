@@ -50,6 +50,7 @@
       @for (asset of assets; track asset._id) {
         <app-source-cards
           [asset]="asset"
+          (click)="selectAsset(asset)"  
           ><!--(delete)="deleteAsset(asset._id)" -->
         </app-source-cards>
       }

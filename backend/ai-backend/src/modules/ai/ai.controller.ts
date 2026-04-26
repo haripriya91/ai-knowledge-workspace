@@ -1,41 +1,34 @@
 // src/ai/ai.controller.ts
-import {
-  Controller,
-  Post,
-  Body,
-  UseInterceptors,
-  UploadedFile,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt.guard';
+import { GetUser } from '../auth/get-user.decorator';
+import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { AiService } from './ai.service';
 import { AiRequestDto } from './dto/ai-request.dto';
-import { AiResult } from './types/ai.type'; // ← import shared type so return type is nameable
-
-// @UseGuards(JwtAuthGuard)  // ← uncomment when auth module is ready
+import { AiResult } from '../ai/types/ai.type';
 
 @Controller('ai')
 export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Post('process')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          cb(null, `${Date.now()}-${file.originalname}`);
-        },
-      }),
-    }),
-  )
+  @UseGuards(JwtAuthGuard)
   async processAi(
-    @Body() dto: AiRequestDto,
-    @UploadedFile() file?: Express.Multer.File,
+    @GetUser() user: JwtPayload,
+    @Body() body: Record<string, string>,
   ): Promise<AiResult> {
-    // ← explicit return type — fixes "cannot be named" error ✅
-    const filePath = file?.path;
-    const url = dto.url;
+    const dto: AiRequestDto = {
+      action: body['action'] as AiRequestDto['action'],
+      workspaceId: body['workspaceId'],
+      question: body['question'],
+      url: body['url'],
+      history: body['history']
+        ? (JSON.parse(body['history']) as { role: string; text: string }[])
+        : [],
+    };
+
+    const filePath = body['filePath'];
+    const url = body['url'];
 
     return this.aiService.processAiRequest(dto, filePath, url);
   }
