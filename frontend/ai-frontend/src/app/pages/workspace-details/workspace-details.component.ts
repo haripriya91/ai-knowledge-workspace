@@ -4,6 +4,8 @@ import { WorkspaceSourcesComponent } from '../../features/workspace/components/w
 import { WorkspaceAiFeaturesComponent } from '../../features/workspace/components/workspace-ai-features/workspace-ai-features.component';
 import { WorkspaceService } from '../../features/workspace/workspace.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Asset } from '../../shared/models/asset.model';
+
 @Component({
   selector: 'app-workspace-details',
   imports: [ WorkspaceSourcesComponent,WorkspaceAiFeaturesComponent],
@@ -20,6 +22,7 @@ export class WorkspaceDetailsComponent {
    loading = false;
    error = '';
    activeTab: 'sources' | 'chat' | 'ai' = 'chat';
+   selectedAsset: Asset | null = null;
    
   ngOnInit() {
 
@@ -62,5 +65,11 @@ export class WorkspaceDetailsComponent {
 
   get isMobile() {
     return window.innerWidth < 768;
+  }
+
+  onAssetSelected(asset: Asset) {       // ← ADD THIS
+    this.selectedAsset = asset;
+    // On mobile, switch to AI tab automatically when asset is picked
+    this.activeTab = 'ai';
   }
 }
