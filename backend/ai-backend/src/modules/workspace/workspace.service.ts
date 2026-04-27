@@ -104,7 +104,6 @@ export class WorkspaceService {
     if (!userId || !hasAccess) {
       throw new UnauthorizedException('Access denied');
     }
-    console.log('workspace:', workspace);
 
     return workspace;
   }
