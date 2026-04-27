@@ -32,12 +32,10 @@ export class WorkspaceSourcesComponent {
 
     this.workspaceId = this.route.snapshot.paramMap.get('id')!;
     this.loadAssets();
-    console.log(this.assets)
   }
 
   loadAssets() {
     this.loading = true;
-    console.log('Loading assets for workspace:', this.workspaceId, 'Public:', this.isPublicWorkspace);
     if (this.isPublicWorkspace) {
       this.assetService.getPublicAssets(this.workspaceId).subscribe({
         next: (data) => {

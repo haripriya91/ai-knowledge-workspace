@@ -48,7 +48,6 @@ export class WorkspaceController {
     @Param('id') id: string,
     @GetUser() user?: JwtPayload, // optional
   ) {
-    console.log('userId:', user?.userId);
     return this.workspaceService.getWorkspaceDetails(id, user?.userId);
   }
 }
