@@ -13,7 +13,7 @@
   <aside class="col-span-12 md:col-span-3 h-full overflow-hidden"
   [class.hidden]="activeTab !== 'sources' && isMobile" >
     <app-workspace-sources [workspaceId]="workspaceId"
-    [isPublicWorkspace]="workspace.isPublic"  (assetSelected)="onAssetSelected($event)"/>
+    [isPublicWorkspace]="workspace.isPublic"/>
   </aside>
 }
   <!-- MAIN WORKSPACE -->
@@ -29,7 +29,7 @@
         <div class="max-w-3xl text-sm text-gray-700 leading-relaxed">
           <h2 class="font-semibold text-lg mb-2">Workspace Overview : {{ workspace?.name || 'Untitled' }}</h2>
           <p>
-           {{ workspace?.description || 'No description provided for this workspace.' }}
+           {{ workspace?.description || result }}
           </p>
         </div>
   
@@ -74,6 +74,6 @@
   <!-- AI TOOLS -->
   <aside class="col-span-12 md:col-span-1"
   [class.hidden]="activeTab !== 'ai' && isMobile">
-    <app-workspace-ai-features [workspaceId]="workspaceId" [selectedAsset]="selectedAsset"/>
+    <app-workspace-ai-features [workspaceId]="workspaceId"/>
   </aside>
 </div>

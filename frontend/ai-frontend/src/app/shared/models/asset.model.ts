@@ -7,4 +7,5 @@ export interface Asset {
      userId?: string;
     workspaceId: string;
     isPublic: boolean;
+    fileUrl?: string; 
   }
