@@ -7,12 +7,6 @@ import { AiRequestDto } from './dto/ai-request.dto';
 import { PROMPTS } from './prompts/prompts';
 import { AiResult, FlashCard, QuizItem } from './types/ai.type'; // ← shared types
 
-// ─── pdf-parse fix: import as require to avoid ESM/CJS conflict ───
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse') as (
-  buffer: Buffer,
-) => Promise<{ text: string }>;
-
 @Injectable()
 export class AiService {
   private client: Anthropic;
@@ -20,8 +14,9 @@ export class AiService {
   private readonly MAX_TOKENS = 1024;
 
   constructor() {
+    console.log('API KEY loaded:', !!process.env.CLAUDE_API_KEY);
     this.client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+      apiKey: process.env.CLAUDE_API_KEY,
     });
   }
 
@@ -69,10 +64,45 @@ export class AiService {
   }
 
   private async extractFromPdf(filePath: string): Promise<string> {
-    const absolutePath = path.resolve(filePath);
-    const buffer = fs.readFileSync(absolutePath);
-    const data = await pdfParse(buffer);
-    return data.text;
+    let data: Uint8Array;
+
+    if (filePath.startsWith('http')) {
+      const response = await fetch(filePath);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF: ${response.statusText}`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      data = new Uint8Array(arrayBuffer);
+    } else {
+      const absolutePath = path.resolve(filePath);
+      if (!fs.existsSync(absolutePath)) {
+        throw new Error('File not found on server');
+      }
+      data = new Uint8Array(fs.readFileSync(absolutePath));
+    }
+
+    // Dynamic import avoids the ERR_REQUIRE_ESM crash
+    const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
+
+    const pdf = await getDocument({ data }).promise;
+    const pageTexts: string[] = [];
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items
+        .map((item) => ('str' in item ? item.str : ''))
+        .join(' ');
+      pageTexts.push(pageText);
+    }
+
+    const text = pageTexts.join('\n').trim();
+
+    if (!text) {
+      throw new Error('Failed to extract text from PDF');
+    }
+
+    return text;
   }
 
   private async extractFromUrl(url: string): Promise<string> {

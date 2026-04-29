@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { WorkspaceHeaderComponent } from '../../features/workspace/components/workspace-header/workspace-header.component';
 import { WorkspaceSourcesComponent } from '../../features/workspace/components/workspace-sources/workspace-sources.component';
 import { WorkspaceAiFeaturesComponent } from '../../features/workspace/components/workspace-ai-features/workspace-ai-features.component';
 import { WorkspaceService } from '../../features/workspace/workspace.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Asset } from '../../shared/models/asset.model';
+import { WorkspaceStore } from '../../features/workspace/workspace.store';
+import { AiService } from '../../features/ai/ai.service';
 
 @Component({
   selector: 'app-workspace-details',
@@ -22,14 +24,30 @@ export class WorkspaceDetailsComponent {
    loading = false;
    error = '';
    activeTab: 'sources' | 'chat' | 'ai' = 'chat';
-   selectedAsset: Asset | null = null;
-   
+   result: any = null;   
+   private lastProcessedAssetId: string | null = null;
+
+
+  constructor(
+    private store: WorkspaceStore,
+    private aiService: AiService
+  )  {
+    effect(() => {
+      const asset = this.store.selectedAsset();
+  
+      if (asset && asset._id !== this.lastProcessedAssetId) {
+        this.lastProcessedAssetId = asset._id;
+       // this.runInitialSummary(asset);
+      }
+    });
+  }
   ngOnInit() {
 
     this.workspaceId = this.route.snapshot.paramMap.get('id')!;
 
     this.loadWorkspace();
   }
+
 
   loadWorkspace() {
     this.loading = true;
@@ -67,9 +85,20 @@ export class WorkspaceDetailsComponent {
     return window.innerWidth < 768;
   }
 
-  onAssetSelected(asset: Asset) {       // ← ADD THIS
-    this.selectedAsset = asset;
-    // On mobile, switch to AI tab automatically when asset is picked
-    this.activeTab = 'ai';
+  runInitialSummary(asset: Asset) {
+    this.loading = true;
+  
+    this.aiService
+      .processAsset('summary', this.workspaceId, asset)
+      .subscribe({
+        next: (res) => {
+          this.result = res;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to load summary';
+          this.loading = false;
+        }
+      });
   }
 }

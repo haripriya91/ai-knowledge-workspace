@@ -7,6 +7,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { MailModule } from './modules/mail/mail.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { AssetModule } from './modules/asset/asset.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AssetModule } from './modules/asset/asset.module';
     MailModule,
     WorkspaceModule,
     AssetModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

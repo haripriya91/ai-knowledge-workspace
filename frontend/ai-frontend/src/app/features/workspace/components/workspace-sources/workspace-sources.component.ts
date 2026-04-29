@@ -4,6 +4,7 @@ import { AssetService } from '../../asset.service';
 import { ActivatedRoute } from '@angular/router';
 import { UploadSourceComponent } from '../upload-source/upload-source.component';
 import { Asset } from '../../../../shared/models/source.model';
+import { WorkspaceStore } from '../../workspace.store';
 
 @Component({
   selector: 'app-workspace-sources',
@@ -16,7 +17,6 @@ export class WorkspaceSourcesComponent {
   assets: any[] = [];
   @Input() workspaceId!: string;
   @Input() isPublicWorkspace!: boolean;
-  @Output() assetSelected = new EventEmitter<Asset>(); 
 
   loading = false;
   error = '';
@@ -25,7 +25,9 @@ export class WorkspaceSourcesComponent {
 
   constructor(
     private assetService: AssetService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store: WorkspaceStore
+
   ) {}
 
   ngOnInit() {
@@ -35,30 +37,25 @@ export class WorkspaceSourcesComponent {
   }
 
   loadAssets() {
-    this.loading = true;
-    if (this.isPublicWorkspace) {
-      this.assetService.getPublicAssets(this.workspaceId).subscribe({
-        next: (data) => {
-          this.assets = data || [];
-          this.loading = false;
-        },
-        error: () => {
-          this.error = 'Failed to load assets';
-          this.loading = false;
-        }
-      });
-    } else {
-      this.assetService.getMyAssets(this.workspaceId).subscribe({
-        next: (data) => {
-          this.assets = data || [];
-          this.loading = false;
-        },
-        error: () => {
-          this.error = 'Failed to load assets';
-          this.loading = false;
-        }
-      });
-    }
+    this.store.setLoading(true);
+
+    const request$ = this.isPublicWorkspace
+      ? this.assetService.getPublicAssets(this.workspaceId)
+      : this.assetService.getMyAssets(this.workspaceId);
+  
+    request$.subscribe({
+      next: (data) => {
+        this.assets = data || [];
+  
+        this.store.setAssets(this.assets); // ✅ KEY LINE
+  
+        this.store.setLoading(false);
+      },
+      error: () => {
+        this.error = 'Failed to load assets';
+        this.store.setLoading(false);
+      }
+    });
   }
 
 
@@ -121,7 +118,8 @@ uploadFile(data: { file?: File; url?: string; name?: string }) {
   });
 }
 
-selectAsset(asset: Asset) {          
-  this.assetSelected.emit(asset);
+selectAsset(asset: Asset) {
+  this.store.selectAsset(asset); 
 }
+
 }

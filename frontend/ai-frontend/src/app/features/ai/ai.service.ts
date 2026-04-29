@@ -7,30 +7,27 @@ import { Asset } from '../../shared/models/source.model';
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
-  private readonly API = 'http://localhost:3000/ai/process';
+  private readonly API = 'http://localhost:3000/api/ai/process';
 
   constructor(private http: HttpClient) {}
 
-  // Called AFTER a file is already uploaded — pass the saved filePath from backend
   processFile(
     action: AiAction,
     workspaceId: string,
-    filePath: string,           // path returned from your upload endpoint
+    filePath: string,
     question?: string,
     history?: ChatMessage[]
   ): Observable<AiResult> {
-    const form = new FormData();
-    form.append('action', action);
-    form.append('workspaceId', workspaceId);
-    if (question) form.append('question', question);
-    if (history) form.append('history', JSON.stringify(history));
 
-    // Send filePath as text — backend resolves it from disk
-    form.append('filePath', filePath);
-    return this.http.post<AiResult>(this.API, form);
+    return this.http.post<AiResult>(this.API, {
+      action,
+      workspaceId,
+      filePath,
+      question,
+      history,
+    });
   }
 
-  // Called with a URL instead of a file
   processAsset(
     action: AiAction,
     workspaceId: string,
@@ -38,21 +35,23 @@ export class AiService {
     question?: string,
     history?: ChatMessage[]
   ): Observable<AiResult> {
-    const form = new FormData();
-    form.append('action', action);
-    form.append('workspaceId', workspaceId);
 
-    // Backend decides which to use based on asset type
-    if (asset.type === 'pdf' && asset.filePath) {
-      form.append('filePath', asset.filePath);
+    const payload: any = {
+      action,
+      workspaceId,
+      question,
+      history,
+    };
+
+    if (asset.type === 'pdf' && asset.fileUrl) {
+      payload.filePath = asset.fileUrl; // S3 signed URL
     }
+
     if (asset.type === 'url' && asset.url) {
-      form.append('url', asset.url);
+      payload.url = asset.url;
     }
 
-    if (question) form.append('question', question);
-    if (history?.length) form.append('history', JSON.stringify(history));
-
-    return this.http.post<AiResult>(this.API, form);
+    return this.http.post<AiResult>(this.API, payload);
   }
+
 }

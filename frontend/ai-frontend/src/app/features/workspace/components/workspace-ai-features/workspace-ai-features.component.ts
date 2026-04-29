@@ -5,6 +5,7 @@ import {
   AiAction, AiResult, ChatMessage, FlashCard, QuizItem
 } from '../../../../shared/models/ai-feature.model'
 import { Asset } from '../../../../shared/models/asset.model';
+import { WorkspaceStore } from '../../workspace.store';
 
 @Component({
   selector: 'app-workspace-ai-features',
@@ -14,7 +15,6 @@ import { Asset } from '../../../../shared/models/asset.model';
 })
 export class WorkspaceAiFeaturesComponent {
   @Input() workspaceId!: string;
-  @Input() selectedAsset: Asset | null = null;  // ← receives from parent
 
   loading = false;
   result: AiResult | null = null;
@@ -25,7 +25,14 @@ export class WorkspaceAiFeaturesComponent {
   chatHistory: ChatMessage[] = [];
   chatInput = '';
 
-  constructor(private aiService: AiService) {}
+  constructor(private aiService: AiService,
+    private store: WorkspaceStore
+
+  ) {}
+
+  get selectedAsset() {
+    return this.store.selectedAsset();
+  }
 
   // Guard — show message if no asset selected yet
   get hasAsset(): boolean {

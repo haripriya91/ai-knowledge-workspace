@@ -1,24 +1,10 @@
-// src/ai/dto/ai-request.dto.ts
-import { IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
-
-export type AiAction = 'summary' | 'qna' | 'flashcards' | 'quiz' | 'chat';
+export type AiAction = 'summary' | 'qna' | 'chat' | 'flashcards' | 'quiz';
 
 export class AiRequestDto {
-  @IsEnum(['summary', 'qna', 'flashcards', 'quiz', 'chat'])
-  action!: AiAction; // ← added ! (definite assignment assertion)
-
-  @IsString()
-  workspaceId!: string; // ← added !
-
-  @IsOptional()
-  @IsString()
+  action!: AiAction;
+  workspaceId!: string;
+  filePath?: string; // S3 URL
+  url?: string;
   question?: string;
-
-  @IsOptional()
-  @IsString()
-  url?: string; // ← moved URL here from controller (fixes the `any` cast problem)
-
-  @IsOptional()
-  @IsArray()
   history?: { role: string; text: string }[];
 }

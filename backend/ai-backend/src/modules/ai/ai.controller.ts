@@ -1,11 +1,17 @@
-// src/ai/ai.controller.ts
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common';
+
+import { AiService } from './ai.service';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { GetUser } from '../auth/get-user.decorator';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
-import { AiService } from './ai.service';
+import type { AiResult } from '../ai/types/ai.type';
 import { AiRequestDto } from './dto/ai-request.dto';
-import { AiResult } from '../ai/types/ai.type';
 
 @Controller('ai')
 export class AiController {
@@ -15,21 +21,12 @@ export class AiController {
   @UseGuards(JwtAuthGuard)
   async processAi(
     @GetUser() user: JwtPayload,
-    @Body() body: Record<string, string>,
+    @Body() dto: AiRequestDto,
   ): Promise<AiResult> {
-    const dto: AiRequestDto = {
-      action: body['action'] as AiRequestDto['action'],
-      workspaceId: body['workspaceId'],
-      question: body['question'],
-      url: body['url'],
-      history: body['history']
-        ? (JSON.parse(body['history']) as { role: string; text: string }[])
-        : [],
-    };
+    if (!dto.action || !dto.workspaceId) {
+      throw new BadRequestException('Missing required fields');
+    }
 
-    const filePath = body['filePath'];
-    const url = body['url'];
-
-    return this.aiService.processAiRequest(dto, filePath, url);
+    return this.aiService.processAiRequest(dto, dto.filePath, dto.url);
   }
 }
