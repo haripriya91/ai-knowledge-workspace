@@ -1,11 +1,16 @@
 // src/ai/ai.service.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import Anthropic from '@anthropic-ai/sdk';
-import * as fs from 'fs';
-import * as path from 'path';
+//import * as fs from 'fs';
+//import * as path from 'path';
 import { AiRequestDto } from './dto/ai-request.dto';
 import { PROMPTS } from './prompts/prompts';
 import { AiResult, FlashCard, QuizItem } from './types/ai.type'; // ← shared types
+import { S3Service } from 'src/common/storage/s3.service';
+import type {
+  TextItem,
+  TextMarkedContent,
+} from 'pdfjs-dist/types/src/display/api';
 
 @Injectable()
 export class AiService {
@@ -13,7 +18,7 @@ export class AiService {
   private readonly MODEL = 'claude-haiku-4-5';
   private readonly MAX_TOKENS = 1024;
 
-  constructor() {
+  constructor(private readonly s3Service: S3Service) {
     console.log('API KEY loaded:', !!process.env.CLAUDE_API_KEY);
     this.client = new Anthropic({
       apiKey: process.env.CLAUDE_API_KEY,
@@ -63,46 +68,32 @@ export class AiService {
     return null;
   }
 
-  private async extractFromPdf(filePath: string): Promise<string> {
-    let data: Uint8Array;
+  private async extractFromPdf(fileKey: string): Promise<string> {
+    // 👇 GET file from S3 using key
+    const s3Object = await this.s3Service.getObject(fileKey);
 
-    if (filePath.startsWith('http')) {
-      const response = await fetch(filePath);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch PDF: ${response.statusText}`);
-      }
-      const arrayBuffer = await response.arrayBuffer();
-      data = new Uint8Array(arrayBuffer);
-    } else {
-      const absolutePath = path.resolve(filePath);
-      if (!fs.existsSync(absolutePath)) {
-        throw new Error('File not found on server');
-      }
-      data = new Uint8Array(fs.readFileSync(absolutePath));
-    }
+    const data = new Uint8Array(s3Object.Body as Buffer);
 
-    // Dynamic import avoids the ERR_REQUIRE_ESM crash
     const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
 
     const pdf = await getDocument({ data }).promise;
+
     const pageTexts: string[] = [];
 
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
+
       const pageText = content.items
-        .map((item) => ('str' in item ? item.str : ''))
+        .map((item: TextItem | TextMarkedContent) =>
+          'str' in item ? item.str : '',
+        )
         .join(' ');
+
       pageTexts.push(pageText);
     }
 
-    const text = pageTexts.join('\n').trim();
-
-    if (!text) {
-      throw new Error('Failed to extract text from PDF');
-    }
-
-    return text;
+    return pageTexts.join('\n').trim();
   }
 
   private async extractFromUrl(url: string): Promise<string> {

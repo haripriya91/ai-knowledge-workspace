@@ -1,104 +1,128 @@
-import { Component, effect, inject } from '@angular/core';
-import { WorkspaceHeaderComponent } from '../../features/workspace/components/workspace-header/workspace-header.component';
-import { WorkspaceSourcesComponent } from '../../features/workspace/components/workspace-sources/workspace-sources.component';
-import { WorkspaceAiFeaturesComponent } from '../../features/workspace/components/workspace-ai-features/workspace-ai-features.component';
-import { WorkspaceService } from '../../features/workspace/workspace.service';
+import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Asset } from '../../shared/models/asset.model';
+import { WorkspaceService } from '../../features/workspace/workspace.service';
 import { WorkspaceStore } from '../../features/workspace/workspace.store';
 import { AiService } from '../../features/ai/ai.service';
+import { AiAction } from '../../shared/models/ai-feature.model';
+import { ChatUIMessage } from '../../shared/models/chat.model';
+import { Asset } from '../../shared/models/asset.model';
 
 @Component({
   selector: 'app-workspace-details',
-  imports: [ WorkspaceSourcesComponent,WorkspaceAiFeaturesComponent],
   templateUrl: './workspace-details.component.html',
-  styleUrl: './workspace-details.component.css'
 })
 export class WorkspaceDetailsComponent {
+
   private workspaceService = inject(WorkspaceService);
-  router = inject(Router);
-  route = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private store = inject(WorkspaceStore);
+  private aiService = inject(AiService);
+
   workspace: any;
-   workspaceId!: string;
-   workspaceName = '';
-   loading = false;
-   error = '';
-   activeTab: 'sources' | 'chat' | 'ai' = 'chat';
-   result: any = null;   
-   private lastProcessedAssetId: string | null = null;
+  workspaceId!: string;
 
+  loading = signal(false);
+  error = signal('');
 
-  constructor(
-    private store: WorkspaceStore,
-    private aiService: AiService
-  )  {
+  chatMessages = signal<ChatUIMessage[]>([]);
+  chatInput = signal('');
+
+  activeTab = signal<'sources' | 'chat' | 'ai'>('chat');
+
+  private lastProcessedAssetId: string | null = null;
+
+  constructor() {
     effect(() => {
       const asset = this.store.selectedAsset();
-  
+
       if (asset && asset._id !== this.lastProcessedAssetId) {
         this.lastProcessedAssetId = asset._id;
-       // this.runInitialSummary(asset);
+        // optional: auto summary
       }
     });
   }
+
   ngOnInit() {
-
     this.workspaceId = this.route.snapshot.paramMap.get('id')!;
-
     this.loadWorkspace();
   }
 
-
   loadWorkspace() {
-    this.loading = true;
+    this.loading.set(true);
 
     this.workspaceService.getWorkspaceDetails(this.workspaceId).subscribe({
       next: (data) => {
         this.workspace = data;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: (err) => {
-        this.error = 'Failed to load workspace';
-        this.loading = false;
+        this.error.set('Failed to load workspace');
+        this.loading.set(false);
 
         if (err.status === 401) {
           this.router.navigate(['/dashboard']);
         }
-      }
+      },
     });
   }
-  
-  onNameChange(newName: string) {
-    if (this.workspaceId)
-      this.workspaceService.update(this.workspaceId, newName).subscribe();
-  }
 
-  deleteWorkspace() {
-    if (this.workspaceId) {
-      this.workspaceService.delete(this.workspaceId).subscribe(() => {
-        this.router.navigate(['/dashboard']);
-      });
-    }
-  }
+  // 🔥 AI ACTION (summary etc.)
+  handleAiAction(action: AiAction) {
+    const asset = this.store.selectedAsset();
+    if (!asset) return;
 
-  get isMobile() {
-    return window.innerWidth < 768;
-  }
+    this.loading.set(true);
 
-  runInitialSummary(asset: Asset) {
-    this.loading = true;
-  
-    this.aiService
-      .processAsset('summary', this.workspaceId, asset)
+    this.aiService.processAsset(action, this.workspaceId, asset)
       .subscribe({
         next: (res) => {
-          this.result = res;
-          this.loading = false;
+          this.loading.set(false);
+
+          if (action === 'summary') {
+            this.chatMessages.update(msgs => [
+              ...msgs,
+              { role: 'user', text: 'Summarize this document' },
+              { role: 'assistant', text: res.data as string }
+            ]);
+          }
         },
-        error: () => {
-          this.error = 'Failed to load summary';
-          this.loading = false;
-        }
+        error: () => this.loading.set(false),
       });
+  }
+
+  // 🔥 CHAT
+  sendMessage() {
+    const message = this.chatInput().trim();
+    if (!message) return;
+
+    const asset = this.store.selectedAsset();
+    if (!asset) return;
+
+    // push user
+    this.chatMessages.update(msgs => [
+      ...msgs,
+      { role: 'user', text: message }
+    ]);
+
+    this.chatInput.set('');
+    this.loading.set(true);
+
+    this.aiService.processAsset(
+      'chat',
+      this.workspaceId,
+      asset,
+      message,
+      this.chatMessages()
+    ).subscribe({
+      next: (res) => {
+        this.chatMessages.update(msgs => [
+          ...msgs,
+          { role: 'assistant', text: res.data as string }
+        ]);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
   }
 }
