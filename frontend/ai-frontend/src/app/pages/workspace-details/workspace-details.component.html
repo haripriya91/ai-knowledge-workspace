@@ -1,9 +1,9 @@
 
 <div class="md:hidden flex border-b text-sm">
 
-  <button class="flex-1 py-2" (click)="activeTab = 'sources'">Sources</button>
-  <button class="flex-1 py-2" (click)="activeTab = 'chat'">Chat</button>
-  <button class="flex-1 py-2" (click)="activeTab = 'ai'">AI</button>
+  <button class="flex-1 py-2" (click)="setTab('sources')">Sources</button>
+  <button class="flex-1 py-2" (click)="setTab('chat')">Chat</button>
+  <button class="flex-1 py-2" (click)="setTab('ai')">AI</button>
 
 </div>
 <!-- Main container - height calculated as viewport minus header height -->
@@ -11,7 +11,7 @@
     <!-- SOURCES -->
   @if (workspace) {
   <aside class="col-span-12 md:col-span-3 h-full overflow-hidden"
-  [class.hidden]="activeTab !== 'sources' && isMobile" >
+  [class.hidden]="activeTab() !== 'sources' && isMobile" >
     <app-workspace-sources [workspaceId]="workspaceId"
     [isPublicWorkspace]="workspace.isPublic"/>
   </aside>
@@ -19,7 +19,7 @@
   <!-- MAIN WORKSPACE -->
   <main
   class="col-span-12 md:col-span-8 flex flex-col h-full min-h-0"
-  [class.hidden]="activeTab !== 'chat' && isMobile">
+  [class.hidden]="activeTab() !== 'chat' && isMobile">
       <!-- CHAT WORKSPACE -->
     <div class="flex flex-col flex-1 bg-gray-50 rounded-xl h-full overflow-hidden">
   
@@ -35,7 +35,7 @@
         </div>
       
         <!-- CHAT -->
-        @for (msg of chatMessages(); track msg) {
+        @for (msg of chatMessages(); track $index) {
       
           @if (msg.role === 'user') {
             <div class="flex justify-end">
@@ -54,32 +54,12 @@
         }
       
       </div>
-      
-      <!-- INPUT -->
-      <div class="flex-none px-6 py-4 border-t">
-        <div class="flex gap-3 bg-white rounded-2xl px-5 py-3">
-      
-          <input
-            [value]="chatInput()"
-            (input)="chatInput.set($any($event.target).value)"
-            class="flex-1 outline-none text-sm"
-            placeholder="Ask something..."
-          />
-      
-          <button
-            (click)="sendMessage()"
-            class="bg-blue-600 text-white px-4 py-2 rounded-xl">
-            Send
-          </button>
-      
-        </div>
-      </div>
   
       <!-- CHAT INPUT - ALWAYS VISIBLE AT BOTTOM -->
       <div class="flex-none px-6 py-4 bg-gray-50 border-t border-gray-200">
         <div class="flex items-center gap-3 bg-white shadow-md rounded-2xl px-5 py-3 w-full max-w-3xl mx-auto">
-          <input class="flex-1 bg-transparent outline-none text-sm" placeholder="Ask something about your sources..." />
-          <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-700 transition">
+          <input [value]="chatInput()" (input)="chatInput.set($any($event.target).value)" class="flex-1 bg-transparent outline-none text-sm" placeholder="Ask something about your sources..." />
+          <button (click)="sendMessage()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-700 transition">
             Send
           </button>
         </div>
@@ -94,7 +74,7 @@
 
   <!-- AI TOOLS -->
   <aside class="col-span-12 md:col-span-1"
-  [class.hidden]="activeTab !== 'ai' && isMobile">
+  [class.hidden]="activeTab() !== 'ai' && isMobile">
     <app-workspace-ai-features [workspaceId]="workspaceId" (actionClicked)="handleAiAction($event)"/>
   </aside>
 </div>
