@@ -38,4 +38,13 @@ export class S3Service {
       })
       .promise();
   }
+
+  async getObject(key: string): Promise<AWS.S3.GetObjectOutput> {
+    return s3
+      .getObject({
+        Bucket: this.bucket,
+        Key: key,
+      })
+      .promise();
+  }
 }

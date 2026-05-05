@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AiFeatureCardComponent } from '../../../ai/components/ai-feature-card/ai-feature-card.component';
 import { AiService } from '../../../ai/ai.service';
 import {
@@ -15,7 +15,7 @@ import { WorkspaceStore } from '../../workspace.store';
 })
 export class WorkspaceAiFeaturesComponent {
   @Input() workspaceId!: string;
-
+  @Output() actionClicked = new EventEmitter<AiAction>();
   loading = false;
   result: AiResult | null = null;
   question = '';
@@ -40,6 +40,10 @@ export class WorkspaceAiFeaturesComponent {
   }
 
   runAction(action: AiAction) {
+    this.actionClicked.emit(action);
+  }
+
+  /* runAction(action: AiAction) {
     if (!this.selectedAsset) return;
     this.loading = true;
     this.result = null;
@@ -69,5 +73,5 @@ export class WorkspaceAiFeaturesComponent {
         },
         error: () => { this.loading = false; }
       });
-  }
+  } */
 }

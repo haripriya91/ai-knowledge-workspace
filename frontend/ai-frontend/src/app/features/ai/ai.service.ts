@@ -43,8 +43,8 @@ export class AiService {
       history,
     };
 
-    if (asset.type === 'pdf' && asset.fileUrl) {
-      payload.filePath = asset.fileUrl; // S3 signed URL
+    if (asset.type === 'pdf' && asset.filePath) {
+      payload.filePath = asset.filePath; 
     }
 
     if (asset.type === 'url' && asset.url) {
