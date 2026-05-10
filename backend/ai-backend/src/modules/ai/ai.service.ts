@@ -16,7 +16,7 @@ import type {
 export class AiService {
   private client: Anthropic;
   private readonly MODEL = 'claude-haiku-4-5';
-  private readonly MAX_TOKENS = 1024;
+  private readonly MAX_TOKENS = 1500;
 
   constructor(private readonly s3Service: S3Service) {
     console.log('API KEY loaded:', !!process.env.CLAUDE_API_KEY);
@@ -68,7 +68,7 @@ export class AiService {
     return null;
   }
 
-  private async extractFromPdf(fileKey: string): Promise<string> {
+  /*private async extractFromPdf(fileKey: string): Promise<string> {
     // 👇 GET file from S3 using key
     const s3Object = await this.s3Service.getObject(fileKey);
 
@@ -92,6 +92,38 @@ export class AiService {
 
       pageTexts.push(pageText);
     }
+
+    return pageTexts.join('\n').trim();
+  }*/
+
+  private async extractFromPdf(fileKey: string): Promise<string> {
+    // Get file from S3
+    const s3Object = await this.s3Service.getObject(fileKey);
+
+    const data = new Uint8Array(s3Object.Body as Buffer);
+
+    const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
+
+    const pdf = await getDocument({ data }).promise;
+
+    // Create parallel promises for all pages
+    const pagePromises = Array.from(
+      { length: pdf.numPages },
+      async (_, index) => {
+        const page = await pdf.getPage(index + 1);
+
+        const content = await page.getTextContent();
+
+        return content.items
+          .map((item: TextItem | TextMarkedContent) =>
+            'str' in item ? item.str : '',
+          )
+          .join(' ');
+      },
+    );
+
+    // Wait for all pages together
+    const pageTexts = await Promise.all(pagePromises);
 
     return pageTexts.join('\n').trim();
   }

@@ -2,12 +2,18 @@
 
 export const PROMPTS = {
   SUMMARY: (content: string) => `
-      You are a helpful study assistant.
-      Summarise the following content in clear, concise bullet points.
-      Focus on the key concepts and main ideas.
-      
-      Content:
-      ${content}
+     You are an educational AI assistant.
+    Create a clean, well-structured summary.
+
+    Formatting rules:
+    - Use markdown headings
+    - Use bullet points
+    - Use short paragraphs
+    - Keep it readable for students
+    - Avoid huge text blocks
+
+    Content:
+    ${content}
     `,
 
   QNA: (content: string, question: string) => `
