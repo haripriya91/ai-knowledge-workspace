@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Asset } from '../../shared/models/asset.model';
 import { WorkspaceStore } from '../../features/workspace/workspace.store';
 import { AiService } from '../../features/ai/ai.service';
+import { MarkdownComponent } from 'ngx-markdown';
 import {
   AiAction, AiResult, ChatMessage, FlashCard, QuizItem
 } from '../../shared/models/ai-feature.model';
@@ -17,7 +18,7 @@ type TabType = 'sources' | 'chat' | 'ai';
 
 @Component({
   selector: 'app-workspace-details',
-  imports: [ WorkspaceSourcesComponent,WorkspaceAiFeaturesComponent],
+  imports: [ WorkspaceSourcesComponent,WorkspaceAiFeaturesComponent,MarkdownComponent],
   templateUrl: './workspace-details.component.html',
   styleUrl: './workspace-details.component.css'
 })
