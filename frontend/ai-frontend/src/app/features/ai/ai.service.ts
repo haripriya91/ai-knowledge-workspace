@@ -8,6 +8,7 @@ import { Asset } from '../../shared/models/source.model';
 @Injectable({ providedIn: 'root' })
 export class AiService {
   private readonly API = 'http://localhost:3000/api/ai/process';
+  private readonly STREAM_API = 'http://localhost:3000/api/ai';
 
   constructor(private http: HttpClient) {}
 
@@ -52,6 +53,55 @@ export class AiService {
     }
 
     return this.http.post<AiResult>(this.API, payload);
+  }
+
+   // STREAM SUMMARY
+   streamSummary(
+    fileKey: string,
+    onChunk: (chunk: string) => void,
+    onComplete: () => void,
+    onError: () => void,
+  ): EventSource {
+
+    const eventSource = new EventSource(
+      `${this.STREAM_API}/summary-stream?fileKey=${encodeURIComponent(fileKey)}`
+    );
+
+    eventSource.onmessage = (event) => {
+      onChunk(event.data);
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+      onError();
+    };
+
+    return eventSource;
+  }
+
+  // STREAM CHAT
+  streamChat(
+    fileKey: string,
+    message: string,
+    onChunk: (chunk: string) => void,
+    onComplete: () => void,
+    onError: () => void,
+  ): EventSource {
+
+    const eventSource = new EventSource(
+      `${this.STREAM_API}/chat-stream?fileKey=${encodeURIComponent(fileKey)}&message=${encodeURIComponent(message)}`
+    );
+
+    eventSource.onmessage = (event) => {
+      onChunk(event.data);
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+      onError();
+    };
+
+    return eventSource;
   }
 
 }
