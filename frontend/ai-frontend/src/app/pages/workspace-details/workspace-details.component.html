@@ -47,12 +47,40 @@
       
           @if (msg.role === 'assistant') {
             <div class="max-w-3xl text-sm text-gray-800">
-              <markdown [data]="msg.text"></markdown>
+              @if (streaming() && $last) {
+                <!-- LIVE STREAMING TEXT -->
+                <div class="whitespace-pre-wrap">
+                  {{ msg.text }}
+                </div>
+              } @else {
+                <!-- FINAL MARKDOWN RENDER -->
+                <markdown [data]="msg.text"></markdown>
+              }
             </div>
           }
-      
         }
-      
+
+        <!-- GPT LOADER -->
+        @if (streaming()) {
+
+          <div class="flex items-center gap-2 text-sm text-gray-400">
+
+            <div class="flex gap-1">
+              <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+
+              <span
+                class="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]">
+              </span>
+
+              <span
+                class="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]">
+              </span>
+            </div>
+
+            <span>AI is thinking...</span>
+
+          </div>
+        }     
       </div>
   
       <!-- CHAT INPUT - ALWAYS VISIBLE AT BOTTOM -->

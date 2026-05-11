@@ -96,7 +96,7 @@ export class AiService {
     return pageTexts.join('\n').trim();
   }*/
 
-  private async extractFromPdf(fileKey: string): Promise<string> {
+  async extractFromPdf(fileKey: string): Promise<string> {
     // Get file from S3
     const s3Object = await this.s3Service.getObject(fileKey);
 
@@ -152,13 +152,73 @@ export class AiService {
     }
     return '';
   }
+  // ─── CLAUDE API STREAM CALL ───────────────────────────────────────────
 
+  /*private async streamClaude(
+    prompt: string,
+    onChunk: (chunk: string) => void,
+  ): Promise<void> {
+    const stream = this.client.messages.stream({
+      model: this.MODEL,
+      max_tokens: this.MAX_TOKENS,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    for await (const event of stream) {
+      if (
+        event.type === 'content_block_delta' &&
+        event.delta.type === 'text_delta'
+      ) {
+        onChunk(event.delta.text);
+      }
+    }
+  }*/
+
+  private async streamClaude(
+    prompt: string,
+    onChunk: (chunk: string) => void,
+  ): Promise<void> {
+    const stream = this.client.messages.stream({
+      model: this.MODEL,
+      max_tokens: this.MAX_TOKENS,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    for await (const event of stream) {
+      if (
+        event.type === 'content_block_delta' &&
+        event.delta.type === 'text_delta'
+      ) {
+        onChunk(event.delta.text);
+      }
+    }
+  }
   // ─── AI ACTIONS ────────────────────────────────────────────────
 
   async getSummary(content: string): Promise<AiResult> {
     const prompt = PROMPTS.SUMMARY(content);
     const result = await this.callClaude(prompt);
     return { type: 'summary', data: result };
+  }
+
+  /*streamSummary(content: string): Observable<string> {
+    return new Observable((observer) => {
+      const prompt = PROMPTS.SUMMARY(content);
+
+      this.streamClaude(prompt, (chunk) => {
+        observer.next(chunk);
+      })
+        .then(() => observer.complete())
+        .catch((err) => observer.error(err));
+    });
+  }*/
+
+  async streamSummary(
+    content: string,
+    onChunk: (chunk: string) => void,
+  ): Promise<void> {
+    const prompt = PROMPTS.SUMMARY(content);
+    await this.streamClaude(prompt, onChunk);
   }
 
   async getQnA(content: string, question?: string): Promise<AiResult> {
@@ -203,5 +263,20 @@ export class AiService {
     const prompt = PROMPTS.CHAT(content, message, history);
     const result = await this.callClaude(prompt);
     return { type: 'chat', data: result };
+  }
+
+  async streamChat(
+    content: string,
+    message: string,
+    history: { role: string; text: string }[],
+    onChunk: (chunk: string) => void,
+  ): Promise<void> {
+    if (!message) {
+      throw new BadRequestException('Message is required for chat.');
+    }
+
+    const prompt = PROMPTS.CHAT(content, message, history);
+
+    await this.streamClaude(prompt, onChunk);
   }
 }

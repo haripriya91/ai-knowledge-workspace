@@ -37,7 +37,8 @@ export class WorkspaceDetailsComponent {
    chatMessages = signal<ChatUIMessage[]>([]);
    chatInput = signal<string>('');
 
-
+   streaming = signal(false);
+   streamingMessage = signal('');
   constructor(
     private store: WorkspaceStore,
     private aiService: AiService
@@ -114,7 +115,7 @@ export class WorkspaceDetailsComponent {
     this.chatInput.set(value);
   }
 
-  sendMessage() {
+  /*sendMessage() {
     const message = this.chatInput().trim();
     const asset = this.store.selectedAsset();
 
@@ -141,9 +142,67 @@ export class WorkspaceDetailsComponent {
         },
         error: () => this.loading = false
       });
+  } */
+
+  sendMessage() {
+
+    const message = this.chatInput().trim();
+    const asset = this.store.selectedAsset();
+    if (!message || !asset) return;
+    // USER MESSAGE
+    this.chatMessages.update(list => [
+      ...list,
+      {
+        role: 'user',
+        text: message,
+      },
+    ]);
+  
+    this.chatInput.set('');
+  
+    this.streaming.set(true);
+  
+    let aiText = '';
+  
+    // EMPTY AI MESSAGE
+    this.chatMessages.update(list => [
+      ...list,
+      {
+        role: 'assistant',
+        text: '',
+      },
+    ]);
+  
+    const eventSource =
+      this.aiService.streamChat(
+        asset.filePath!,
+        message,
+        // CHUNK
+        (chunk: string) => {
+          aiText += chunk;
+          this.chatMessages.update(list => {
+            const updated = [...list];
+            updated[updated.length - 1] = {
+              role: 'assistant',
+              text: aiText,
+            };
+            return updated;
+          });
+        },
+        // COMPLETE
+        () => {
+          this.streaming.set(false);
+          eventSource.close();
+        },
+        // ERROR
+        () => {
+          this.streaming.set(false);
+          eventSource.close();
+        },
+      );
   }
 
-  handleAiAction(action: any) {
+  /*handleAiAction(action: any) {
     const asset = this.store.selectedAsset();
     if (!asset) return;
 
@@ -171,5 +230,70 @@ export class WorkspaceDetailsComponent {
         },
         error: () => this.loading = false
       });
+  }*/
+
+  handleAiAction(action: any) {
+
+    const asset = this.store.selectedAsset();
+
+    if (!asset) return;
+
+    this.streaming.set(true);
+
+    let aiText = '';
+
+    // USER ACTION MESSAGE
+    this.chatMessages.update(list => [
+      ...list,
+
+      {
+        role: 'user',
+        text:
+          action === 'summary'
+            ? 'Summarize this document'
+            : action,
+      },
+
+      {
+        role: 'assistant',
+        text: '',
+      },
+    ]);
+
+    const eventSource =
+      this.aiService.streamSummary(
+
+        asset.filePath!,
+
+        // CHUNK
+        (chunk: string) => {
+
+          aiText += chunk;
+
+          this.chatMessages.update(list => {
+
+            const updated = [...list];
+
+            updated[updated.length - 1] = {
+              role: 'assistant',
+              text: aiText,
+            };
+
+            return updated;
+          });
+        },
+
+        // COMPLETE
+        () => {
+          this.streaming.set(false);
+          eventSource.close();
+        },
+
+        // ERROR
+        () => {
+          this.streaming.set(false);
+          eventSource.close();
+        },
+      );
   }
 }
