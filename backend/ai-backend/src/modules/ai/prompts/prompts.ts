@@ -42,17 +42,32 @@ export const PROMPTS = {
     `,
 
   QUIZ: (content: string) => `
-      You are a helpful study assistant.
-      Create a 5-question multiple choice quiz from the content below.
-      Return ONLY a valid JSON array, no extra text.
-      Format:
+      You are a strict JSON generator.
+
+      Return ONLY valid JSON.
+      No markdown.
+      No explanations.
+      No extra text.
+
+      Rules:
+      - Output must be valid JSON array
+      - Each item must follow exact schema
+      - Do NOT include commentary
+
+      Schema:
       [
         {
-          "question": "...",
-          "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
-          "answer": "A"
+          "question": "string",
+          "options": {
+            "A": "string",
+            "B": "string",
+            "C": "string",
+            "D": "string"
+          },
+          "answer": "A" | "B" | "C" | "D"
         }
       ]
+
       
       Content:
       ${content}

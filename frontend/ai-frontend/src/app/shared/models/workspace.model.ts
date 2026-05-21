@@ -1,9 +1,9 @@
 export interface Workspace {
   id: string;
-  title: string;
+  name: string;
   description: string;
   category: string;
-  visibility: 'public' | 'private';
+  isPublic: boolean;
   thumbnail: string;
   createdAt: string;
 }

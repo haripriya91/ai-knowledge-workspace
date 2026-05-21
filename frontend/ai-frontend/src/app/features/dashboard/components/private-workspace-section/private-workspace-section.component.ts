@@ -1,7 +1,6 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { WorkspaceListComponent } from '../../../workspace/components/workspace-list/workspace-list.component';
 import { ViewToggleComponent } from '../../../../shared/components/view-toggle/view-toggle.component';
-import { PRIVATE_WORKSPACES } from '../../private-workspaces.mock';
 import { Workspace } from '../../../../shared/models/workspace.model';
 
 @Component({
