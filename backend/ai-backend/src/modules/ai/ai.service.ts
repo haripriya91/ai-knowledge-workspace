@@ -7,6 +7,8 @@ import { AiRequestDto } from './dto/ai-request.dto';
 import { PROMPTS } from './prompts/prompts';
 import { AiResult, FlashCard, QuizItem } from './types/ai.type'; // ← shared types
 import { S3Service } from 'src/common/storage/s3.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import type {
   TextItem,
   TextMarkedContent,
@@ -18,7 +20,10 @@ export class AiService {
   private readonly MODEL = 'claude-haiku-4-5';
   private readonly MAX_TOKENS = 1500;
 
-  constructor(private readonly s3Service: S3Service) {
+  constructor(
+    private readonly s3Service: S3Service,
+    private readonly prisma: PrismaService,
+  ) {
     console.log('API KEY loaded:', !!process.env.CLAUDE_API_KEY);
     this.client = new Anthropic({
       apiKey: process.env.CLAUDE_API_KEY,
@@ -31,23 +36,83 @@ export class AiService {
     filePath?: string,
     url?: string,
   ): Promise<AiResult> {
+    const asset = await this.prisma.asset.findFirst({
+      where: {
+        OR: [{ filePath }, { url }],
+      },
+    });
+
     const content = await this.extractContent(filePath, url);
 
     if (!content) {
-      throw new BadRequestException('No content found to process.');
+      throw new BadRequestException('No content found');
     }
 
     switch (dto.action) {
-      case 'summary':
-        return this.getSummary(content);
+      case 'summary': {
+        if (asset?.summaryCache) {
+          return {
+            type: 'summary',
+            data: asset.summaryCache,
+          };
+        }
+        const result = await this.getSummary(content);
+        if (asset?.id) {
+          await this.prisma.asset.update({
+            where: { id: asset.id },
+            data: {
+              summaryCache: result.data as string,
+            },
+          });
+        }
+        return result;
+      }
+      case 'flashcards': {
+        if (asset?.flashcardCache) {
+          return {
+            type: 'flashcards',
+            data: asset.flashcardCache as unknown as FlashCard[],
+          };
+        }
+        const result = await this.getFlashcards(content);
+
+        if (asset?.id && Array.isArray(result.data)) {
+          await this.prisma.asset.update({
+            where: { id: asset.id },
+            data: {
+              flashcardCache: this.safeJson(result.data),
+            },
+          });
+        }
+
+        return result;
+      }
+      case 'quiz': {
+        if (asset?.quizCache) {
+          return {
+            type: 'quiz',
+            data: asset.quizCache as unknown as QuizItem[],
+          };
+        }
+
+        const result = await this.getQuiz(content);
+
+        if (asset?.id && Array.isArray(result.data)) {
+          await this.prisma.asset.update({
+            where: { id: asset.id },
+            data: {
+              quizCache: this.safeJson(result.data),
+            },
+          });
+        }
+        return result;
+      }
       case 'qna':
         return this.getQnA(content, dto.question);
-      case 'flashcards':
-        return this.getFlashcards(content);
-      case 'quiz':
-        return this.getQuiz(content);
+
       case 'chat':
         return this.getChat(content, dto.question ?? '', dto.history ?? []);
+
       default:
         throw new BadRequestException('Unknown AI action.');
     }
@@ -59,73 +124,31 @@ export class AiService {
     filePath?: string,
     url?: string,
   ): Promise<string | null> {
-    if (filePath) {
-      return this.extractFromPdf(filePath);
-    }
-    if (url) {
-      return this.extractFromUrl(url);
-    }
+    if (filePath) return this.extractFromPdf(filePath);
+    if (url) return this.extractFromUrl(url);
     return null;
   }
 
-  /*private async extractFromPdf(fileKey: string): Promise<string> {
-    // 👇 GET file from S3 using key
+  async extractFromPdf(fileKey: string): Promise<string> {
     const s3Object = await this.s3Service.getObject(fileKey);
-
     const data = new Uint8Array(s3Object.Body as Buffer);
 
     const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
-
     const pdf = await getDocument({ data }).promise;
 
-    const pageTexts: string[] = [];
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
+    const pagePromises = Array.from({ length: pdf.numPages }, async (_, i) => {
+      const page = await pdf.getPage(i + 1);
       const content = await page.getTextContent();
 
-      const pageText = content.items
+      return content.items
         .map((item: TextItem | TextMarkedContent) =>
           'str' in item ? item.str : '',
         )
         .join(' ');
+    });
 
-      pageTexts.push(pageText);
-    }
-
-    return pageTexts.join('\n').trim();
-  }*/
-
-  async extractFromPdf(fileKey: string): Promise<string> {
-    // Get file from S3
-    const s3Object = await this.s3Service.getObject(fileKey);
-
-    const data = new Uint8Array(s3Object.Body as Buffer);
-
-    const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
-
-    const pdf = await getDocument({ data }).promise;
-
-    // Create parallel promises for all pages
-    const pagePromises = Array.from(
-      { length: pdf.numPages },
-      async (_, index) => {
-        const page = await pdf.getPage(index + 1);
-
-        const content = await page.getTextContent();
-
-        return content.items
-          .map((item: TextItem | TextMarkedContent) =>
-            'str' in item ? item.str : '',
-          )
-          .join(' ');
-      },
-    );
-
-    // Wait for all pages together
-    const pageTexts = await Promise.all(pagePromises);
-
-    return pageTexts.join('\n').trim();
+    const pages = await Promise.all(pagePromises);
+    return pages.join('\n').trim();
   }
 
   private async extractFromUrl(url: string): Promise<string> {
@@ -278,5 +301,9 @@ export class AiService {
     const prompt = PROMPTS.CHAT(content, message, history);
 
     await this.streamClaude(prompt, onChunk);
+  }
+
+  private safeJson(data: FlashCard[] | QuizItem[]): Prisma.InputJsonValue {
+    return data as unknown as Prisma.InputJsonValue;
   }
 }
