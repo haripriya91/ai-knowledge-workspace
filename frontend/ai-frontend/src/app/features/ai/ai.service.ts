@@ -34,27 +34,20 @@ export class AiService {
     workspaceId: string,
     asset: Asset,
     question?: string,
-    history?: ChatMessage[]
+    history?: ChatMessage[],
   ): Observable<AiResult> {
-
-    const payload: any = {
-      action,
-      workspaceId,
-      question,
-      history,
-    };
-
-    if (asset.type === 'pdf' && asset.filePath) {
-      payload.filePath = asset.filePath; 
-    }
-
-    if (asset.type === 'url' && asset.url) {
-      payload.url = asset.url;
-    }
-
-    return this.http.post<AiResult>(this.API, payload);
+  
+    return this.http.post<AiResult>(
+      this.API,
+      {
+        action,
+        workspaceId,
+        assetId: asset._id,
+        question,
+        history,
+      },
+    );
   }
-
    // STREAM SUMMARY
    streamSummary(
     fileKey: string,

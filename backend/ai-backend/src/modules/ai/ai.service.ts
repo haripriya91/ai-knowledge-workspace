@@ -31,23 +31,40 @@ export class AiService {
   }
 
   // ─── MAIN ENTRY POINT ──────────────────────────────────────────
-  async processAiRequest(
-    dto: AiRequestDto,
-    filePath?: string,
-    url?: string,
-  ): Promise<AiResult> {
-    const asset = await this.prisma.asset.findFirst({
+  async processAiRequest(dto: AiRequestDto): Promise<AiResult> {
+    const asset = await this.prisma.asset.findUnique({
       where: {
-        OR: [{ filePath }, { url }],
+        id: dto.assetId,
       },
     });
 
-    const content = await this.extractContent(filePath, url);
-
-    if (!content) {
-      throw new BadRequestException('No content found');
+    if (!asset) {
+      throw new BadRequestException('Asset not found');
     }
 
+    let content = asset.extractedText;
+
+    // Extract only once
+    if (!content) {
+      if (asset.filePath) {
+        content = await this.extractFromPdf(asset.filePath);
+      } else if (asset.url) {
+        content = await this.extractFromUrl(asset.url);
+      }
+
+      if (!content) {
+        throw new BadRequestException('No content found');
+      }
+
+      await this.prisma.asset.update({
+        where: {
+          id: asset.id,
+        },
+        data: {
+          extractedText: content,
+        },
+      });
+    }
     switch (dto.action) {
       case 'summary': {
         if (asset?.summaryCache) {
