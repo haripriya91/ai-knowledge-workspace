@@ -8,12 +8,14 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { S3Service } from '../../common/storage/s3.service';
+import { PdfExtractorService } from '../ai/pdf-extractor.service';
 
 @Injectable()
 export class AssetService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly s3Service: S3Service,
+    private readonly pdfExtractorService: PdfExtractorService,
   ) {}
 
   async createAsset(
@@ -41,6 +43,7 @@ export class AssetService {
     }
 
     let fileKey: string | null = null;
+    let extractedText: string | null = null;
     let type: 'pdf' | 'docx' | 'url' = 'url';
 
     if (file) {
@@ -52,6 +55,9 @@ export class AssetService {
       fileKey = await this.s3Service.uploadFile(file);
 
       type = file.mimetype.includes('pdf') ? 'pdf' : 'docx';
+      if (type === 'pdf') {
+        extractedText = await this.pdfExtractorService.extract(fileKey);
+      }
     }
 
     return this.prisma.asset.create({
@@ -61,6 +67,7 @@ export class AssetService {
         url: dto.url || null,
         filePath: fileKey, // store key only
         userId,
+        extractedText,
         workspaceId: dto.workspaceId,
         isPublic: workspace.isPublic,
       },

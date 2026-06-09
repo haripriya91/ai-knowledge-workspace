@@ -30,7 +30,7 @@ export class AiController {
       throw new BadRequestException('Missing required fields');
     }
 
-    return this.aiService.processAiRequest(dto, dto.filePath, dto.url);
+    return this.aiService.processAiRequest(dto);
   }
 
   @Sse('summary-stream')
