@@ -29,42 +29,58 @@ export const PROMPTS = {
 
   FLASHCARDS: (content: string) => `
       You are a helpful study assistant.
-      Create 5-10 flashcards from the content below.
+      Create exactly 10 flashcards from the content below.
       Return ONLY a valid JSON array, no extra text.
       Format:
-      [
-        { "question": "...", "answer": "..." },
-        { "question": "...", "answer": "..." }
+     [
+        {
+          "question":"...",
+          "answer":"..."
+        }
       ]
+        Rules:
+
+      - Questions must cover important concepts
+      - Keep answers concise
+      - Avoid duplicate cards
+      - Cover entire document
       
       Content:
       ${content}
     `,
 
   QUIZ: (content: string) => `
-      You are a strict JSON generator.
+      You are an educational assessment generator.
 
+      Generate EXACTLY 10 multiple-choice questions.
       Return ONLY valid JSON.
       No markdown.
       No explanations.
       No extra text.
 
       Rules:
-      - Output must be valid JSON array
-      - Each item must follow exact schema
-      - Do NOT include commentary
+      - Exactly 10 questions
+      - One correct answer
+      - 3 believable wrong answers
+      - Hint must help without revealing answer
+      - Explanation must explain WHY answer is correct
+      - Cover important concepts
+      - No markdown
+      - No text outside JSON
 
       Schema:
       [
         {
-          "question": "string",
-          "options": {
-            "A": "string",
-            "B": "string",
-            "C": "string",
-            "D": "string"
+          "question":"...",
+          "options":{
+            "A":"...",
+            "B":"...",
+            "C":"...",
+            "D":"..."
           },
-          "answer": "A" | "B" | "C" | "D"
+          "answer":"A",
+          "hint":"...",
+          "explanation":"..."
         }
       ]
 
