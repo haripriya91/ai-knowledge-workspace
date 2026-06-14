@@ -22,8 +22,19 @@ export interface FlashCard {
 
 export interface QuizItem {
   question: string;
-  options: string[];
-  answer: string;
+
+  options: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+  };
+
+  answer: 'A' | 'B' | 'C' | 'D';
+
+  hint: string;
+
+  explanation: string;
 }
 
 export interface AiResult {

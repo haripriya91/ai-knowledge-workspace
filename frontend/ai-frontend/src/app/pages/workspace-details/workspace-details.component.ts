@@ -14,7 +14,11 @@ import {
 import { ChatUIMessage } from '../../shared/models/chat.model';
 
 type TabType = 'sources' | 'chat' | 'ai';
-
+type AiScreen =
+  | 'tools'
+  | 'summary'
+  | 'quiz'
+  | 'flashcards';
 
 @Component({
   selector: 'app-workspace-details',
@@ -39,6 +43,11 @@ export class WorkspaceDetailsComponent {
 
    streaming = signal(false);
    streamingMessage = signal('');
+   aiScreen = signal<AiScreen>('tools');
+
+  quizItems = signal<QuizItem[]>([]);
+  flashCards = signal<FlashCard[]>([]);
+  summaryText = signal('');
   constructor(
     private store: WorkspaceStore,
     private aiService: AiService
@@ -202,98 +211,136 @@ export class WorkspaceDetailsComponent {
       );
   }
 
-  /*handleAiAction(action: any) {
+
+      handleAiAction(action: AiAction) {
+
+      if(action === 'quiz') {
+
+          this.loadQuiz();
+
+          return;
+      }
+
+      if(action === 'flashcards') {
+
+          this.loadFlashcards();
+
+          return;
+      }
+
+      if(action === 'summary') {
+
+          this.loadSummaryStream();
+
+          return;
+      }
+    }
+
+   loadSummaryStream() {
+
+  const asset = this.store.selectedAsset();
+
+  if (!asset) return;
+
+  this.streaming.set(true);
+
+  let aiText = '';
+
+  this.chatMessages.update(list => [
+    ...list,
+    {
+      role: 'user',
+      text: 'Summarize this document'
+    },
+    {
+      role: 'assistant',
+      text: ''
+    }
+  ]);
+
+  const eventSource =
+    this.aiService.streamSummary(
+
+      asset.filePath!,
+
+      (chunk: string) => {
+
+        aiText += chunk;
+
+        this.chatMessages.update(list => {
+
+          const updated = [...list];
+
+          updated[updated.length - 1] = {
+            role: 'assistant',
+            text: aiText
+          };
+
+          return updated;
+        });
+      },
+
+      () => {
+        this.streaming.set(false);
+        eventSource.close();
+      },
+
+      () => {
+        this.streaming.set(false);
+        eventSource.close();
+      }
+    );
+}
+
+    loadFlashcards() {
+
     const asset = this.store.selectedAsset();
+
     if (!asset) return;
 
     this.loading = true;
 
-    this.aiService.processAsset(action, this.workspaceId, asset)
-      .subscribe({
-        next: (res) => {
+    this.aiService
+        .processAsset(
+            'flashcards',
+            this.workspaceId,
+            asset
+        )
+        .subscribe(res => {
 
-          this.chatMessages.update(list => [
-            ...list,
-            {
-              role: 'user',
-              text: action === 'summary'
-                ? 'Summarize this document'
-                : action
-            },
-            {
-              role: 'assistant',
-              text: res.data as string
-            }
-          ]);
+          this.flashCards.set(
+              res.data as FlashCard[]
+          );
+
+          this.aiScreen.set('flashcards');
 
           this.loading = false;
-        },
-        error: () => this.loading = false
-      });
-  }*/
+        });
+  }
 
-  handleAiAction(action: any) {
+  loadQuiz() {
 
     const asset = this.store.selectedAsset();
 
     if (!asset) return;
 
-    this.streaming.set(true);
+    this.loading = true;
 
-    let aiText = '';
+    this.aiService
+        .processAsset(
+            'quiz',
+            this.workspaceId,
+            asset
+        )
+        .subscribe(res => {
 
-    // USER ACTION MESSAGE
-    this.chatMessages.update(list => [
-      ...list,
+          this.quizItems.set(
+              res.data as QuizItem[]
+          );
 
-      {
-        role: 'user',
-        text:
-          action === 'summary'
-            ? 'Summarize this document'
-            : action,
-      },
+          this.aiScreen.set('quiz');
 
-      {
-        role: 'assistant',
-        text: '',
-      },
-    ]);
-
-    const eventSource =
-      this.aiService.streamSummary(
-
-        asset.filePath!,
-
-        // CHUNK
-        (chunk: string) => {
-
-          aiText += chunk;
-
-          this.chatMessages.update(list => {
-
-            const updated = [...list];
-
-            updated[updated.length - 1] = {
-              role: 'assistant',
-              text: aiText,
-            };
-
-            return updated;
-          });
-        },
-
-        // COMPLETE
-        () => {
-          this.streaming.set(false);
-          eventSource.close();
-        },
-
-        // ERROR
-        () => {
-          this.streaming.set(false);
-          eventSource.close();
-        },
-      );
+          this.loading = false;
+        });
   }
 }
